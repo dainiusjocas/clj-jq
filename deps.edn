@@ -1,0 +1,14 @@
+{:paths
+ ["src"]
+ :deps
+ {net.thisptr/jackson-jq {:mvn/version "1.0.0-preview.20201123"}
+  com.fasterxml.jackson.core/jackson-databind {:mvn/version "2.12.1"}}
+  :aliases
+  {:dev
+   {:extra-paths ["dev" "classes" "test" "test/resources"]
+    :extra-deps  {org.clojure/tools.deps.alpha {:mvn/version "0.9.871"
+                                               :exclusions  [org.slf4j/slf4j-log4j12
+                                                             org.slf4j/slf4j-api
+                                                             org.slf4j/slf4j-nop]}
+                  criterium/criterium          {:mvn/version "0.4.6"}}}}
+}
