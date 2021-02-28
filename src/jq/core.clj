@@ -73,7 +73,7 @@
 
   (time (jq.core/execute "[1,2,3]" "map(.+1)"))
 
-  (quick-bench (jq.core/execute "{\"a\":[10,2,3,4,5],\"b\":\"hello\"}" ".a | join(\"-\")"))
+  ;(quick-bench (jq.core/execute "{\"a\":[10,2,3,4,5],\"b\":\"hello\"}" ".a | join(\"-\")"))
 
 
   (dotimes [_ 100] (time (jq.core/execute "{\"a\":[1,2,3,4,5],\"b\":\"hello\"}" ".a"))))
