@@ -9,3 +9,10 @@ lint:
 .PHONY: check-deps
 check-deps:
 	clojure -Sdeps '{:deps {antq/antq {:mvn/version "RELEASE"}}}' -M -m antq.core
+
+.PHONY: release
+release:
+	rm release.properties || true
+	rm pom.xml.releaseBackup || true
+	clojure -Spom
+	mvn release:prepare

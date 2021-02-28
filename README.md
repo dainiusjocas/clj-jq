@@ -2,6 +2,8 @@
 
 A library to execute `jq` scripts on JSON data. It is a thin wrapper around [jackson-jq](https://github.com/eiiches/jackson-jq).
 
+Available `jq` functions can be found [here](https://github.com/eiiches/jackson-jq#implementation-status-and-current-limitations).
+
 ## Alternatives
 
 There is another `jq` library for Clojure: [clj-jq](https://github.com/BrianMWest/clj-jq). 
