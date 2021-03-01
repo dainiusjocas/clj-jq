@@ -1,3 +1,6 @@
+[![Clojars Project](https://img.shields.io/clojars/v/lt.jocas/clj-jq.svg)](https://clojars.org/lt.jocas/clj-jq)
+[![cljdoc badge](https://cljdoc.org/badge/lt.jocas/clj-jq)](https://cljdoc.org/d/lt.jocas/clj-jq/CURRENT)
+
 # clj-jq
 
 A library to execute `jq` scripts on JSON data. It is a thin wrapper around [jackson-jq](https://github.com/eiiches/jackson-jq).
