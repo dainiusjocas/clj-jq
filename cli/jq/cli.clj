@@ -1,6 +1,8 @@
 (ns jq.cli
   (:gen-class)
-  (:require [clojure.tools.cli :as cli]
+  (:require [clojure.java.io :as io]
+            [clojure.string :as str]
+            [clojure.tools.cli :as cli]
             [jq.core :as jq])
   (:import (java.io Reader BufferedReader)))
 
@@ -10,7 +12,12 @@
 (defn handle-args [args]
   (cli/parse-opts args cli-options))
 
+(def version
+  (str/trim
+    (slurp (io/resource "CLJ_JQ_VERSION"))))
+
 (defn print-summary-msg [summary]
+  (println (format "clj-jq %s" version))
   (println "jackson-jq based command-line JSON processor")
   (println "Usage: clj-jq [options] jq-filter [file...]")
   (println "Supported options:")

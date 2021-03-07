@@ -25,5 +25,5 @@
    :extra-deps {clj-kondo/clj-kondo {:mvn/version "2021.03.03"}}
    :jvm-opts   ["-Dclojure.main.report=stderr"]}
   :cli
-  {:extra-paths ["cli" "classes"]
+  {:extra-paths ["cli" "classes" "resources"]
    :extra-deps  {org.clojure/tools.cli {:mvn/version "1.0.206"}}}}}
