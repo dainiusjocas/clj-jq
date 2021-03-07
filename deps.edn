@@ -2,11 +2,11 @@
  ["src"]
  :deps
  {net.thisptr/jackson-jq                      {:mvn/version "1.0.0-preview.20201123"}
-  com.fasterxml.jackson.core/jackson-databind {:mvn/version "2.12.1"}}
+  com.fasterxml.jackson.core/jackson-databind {:mvn/version "2.12.2"}}
  :aliases
  {:dev
   {:extra-paths ["dev" "classes" "test" "test/resources"]
-   :extra-deps  {org.clojure/tools.deps.alpha {:mvn/version "0.9.884"
+   :extra-deps  {org.clojure/tools.deps.alpha {:mvn/version "0.10.889"
                                                :exclusions  [org.slf4j/slf4j-log4j12
                                                              org.slf4j/slf4j-api
                                                              org.slf4j/slf4j-nop]}
@@ -18,5 +18,5 @@
    :main-opts   ["-m" "cognitect.test-runner"]}
   :clj-kondo
   {:main-opts  ["-m" "clj-kondo.main --lint src test"]
-   :extra-deps {clj-kondo/clj-kondo {:mvn/version "2021.02.28"}}
+   :extra-deps {clj-kondo/clj-kondo {:mvn/version "2021.03.03"}}
    :jvm-opts   ["-Dclojure.main.report=stderr"]}}}
