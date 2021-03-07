@@ -14,3 +14,5 @@ pom.xml.asc
 .cpcache/
 .idea/
 clj-jq.iml
+.env
+clj-jq

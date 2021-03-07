@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+
+if [ -z "$GRAALVM_HOME" ]; then
+    echo "Please set GRAALVM_HOME"
+    exit 1
+fi
+
+"$GRAALVM_HOME/bin/gu" install native-image || true
+
+export JAVA_HOME=$GRAALVM_HOME
+export PATH=$GRAALVM_HOME/bin:$PATH
+
+CLJ_JQ_VERSION=$(cat resources/CLJ_JQ_VERSION)
+
+make uberjar
+
+args=( "-jar" "target/clj-jq-uber.jar"
+       "-H:Name=clj-jq"
+       "-H:+ReportExceptionStackTraces"
+       "--initialize-at-build-time"
+       "-H:Log=registerResource:"
+       "--verbose"
+       "--no-fallback"
+       "--no-server"
+       "-J-Xmx3g" )
+
+if [ "$CLJ_JQ_STATIC" = "true" ]; then
+    args+=("--static")
+fi
+
+"$GRAALVM_HOME/bin/native-image" "${args[@]}"
