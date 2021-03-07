@@ -1,4 +1,5 @@
-(ns core
+(ns jq.cli
+  (:gen-class)
   (:require [clojure.tools.cli :as cli]
             [jq.core :as jq])
   (:import (java.io Reader BufferedReader)))
@@ -25,7 +26,7 @@
           (println (jq-processor line)))))))
 
 (defn -main [& args]
-  (let [{:keys [options arguments errors summary]
+  (let [{:keys               [options arguments errors summary]
          [jq-filter & files] :arguments} (handle-args args)]
     (when (seq errors)
       (println "Errors:" errors)

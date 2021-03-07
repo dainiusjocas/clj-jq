@@ -16,10 +16,14 @@
    :extra-deps  {com.cognitect/test-runner {:git/url "https://github.com/cognitect-labs/test-runner.git"
                                             :sha     "b6b3193fcc42659d7e46ecd1884a228993441182"}}
    :main-opts   ["-m" "cognitect.test-runner"]}
+  :uberjar
+  {:replace-deps {seancorfield/depstar {:mvn/version "2.0.193"}}
+   :exec-fn      hf.depstar/uberjar
+   :exec-args    {:aot true}}
   :clj-kondo
   {:main-opts  ["-m" "clj-kondo.main --lint src test"]
    :extra-deps {clj-kondo/clj-kondo {:mvn/version "2021.03.03"}}
    :jvm-opts   ["-Dclojure.main.report=stderr"]}
   :cli
-  {:extra-paths ["cli"]
-   :extra-deps  {org.clojure/tools.cli {:mvn/version "1.0.194"}}}}}
+  {:extra-paths ["cli" "classes"]
+   :extra-deps  {org.clojure/tools.cli {:mvn/version "1.0.206"}}}}}
