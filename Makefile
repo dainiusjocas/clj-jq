@@ -27,3 +27,11 @@ release:
 	rm pom.xml.releaseBackup || true
 	clojure -Spom
 	mvn release:prepare
+
+.PHONY: native-image
+native-image:
+	CLJ_JQ_STATIC=false ./script/compile
+
+.PHONY: static-native-image
+static-native-image:
+	CLJ_JQ_STATIC=true ./script/compile
