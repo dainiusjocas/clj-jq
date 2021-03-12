@@ -21,7 +21,7 @@
    :exec-fn      hf.depstar/uberjar
    :exec-args    {:aot true}}
   :clj-kondo
-  {:main-opts  ["-m" "clj-kondo.main --lint src test"]
+  {:main-opts  ["-m" "clj-kondo.main" "--lint" "src" "test"]
    :extra-deps {clj-kondo/clj-kondo {:mvn/version "2021.03.03"}}
    :jvm-opts   ["-Dclojure.main.report=stderr"]}
   :cli
