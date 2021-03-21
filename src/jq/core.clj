@@ -53,6 +53,14 @@
   [^String data ^String query]
   (query-data data (compile-query query)))
 
+(defn json-node-processor
+  "Given a JQ query string (2) compiles it and returns a function that given
+  a JsonNode object (2) will return a JSON string with (1) applied on (2)."
+  [^String query]
+  (let [^JsonQuery query (compile-query query)]
+    (fn [^JsonNode data]
+      (query-json-node data query))))
+
 (defn processor
   "Given a JQ query string (2) compiles it and returns a function that given
   a JSON string (2) will return a JSON string with (1) applied on (2)."
