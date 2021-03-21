@@ -35,16 +35,16 @@
   [^String query]
   (JsonQuery/compile query jq-version))
 
+(defn query-json-node [^JsonNode data ^JsonQuery query]
+  (let [output-container (OutputContainer. nil)]
+    (.apply query (Scope/newChildScope root-scope) data output-container)
+    (.getValue output-container)))
+
 (defn query-data
   "Given a JSON data string and a JsonQuery object applies the query
   on the JSON data string and return the resulting JSON string."
   [^String data ^JsonQuery query]
-  (let [output-container (OutputContainer. nil)]
-    (.apply query
-            (Scope/newChildScope root-scope)
-            (.readTree mapper data)
-            output-container)
-    (.getValue output-container)))
+  (query-json-node (.readTree mapper data) query))
 
 ; jq docs http://manpages.ubuntu.com/manpages/hirsute/man1/jq.1.html
 (defn execute
