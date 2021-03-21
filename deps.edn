@@ -6,7 +6,7 @@
  :aliases
  {:dev
   {:extra-paths ["dev" "classes" "test" "test/resources"]
-   :extra-deps  {org.clojure/tools.deps.alpha {:mvn/version "0.10.889"
+   :extra-deps  {org.clojure/tools.deps.alpha {:mvn/version "0.11.905"
                                                :exclusions  [org.slf4j/slf4j-log4j12
                                                              org.slf4j/slf4j-api
                                                              org.slf4j/slf4j-nop]}
@@ -17,7 +17,7 @@
                                             :sha     "b6b3193fcc42659d7e46ecd1884a228993441182"}}
    :main-opts   ["-m" "cognitect.test-runner"]}
   :uberjar
-  {:replace-deps {seancorfield/depstar {:mvn/version "2.0.193"}}
+  {:replace-deps {com.github.seancorfield/depstar {:mvn/version "2.0.206"}}
    :exec-fn      hf.depstar/uberjar
    :exec-args    {:aot true}}
   :clj-kondo
