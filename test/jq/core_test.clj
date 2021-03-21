@@ -1,6 +1,7 @@
 (ns jq.core-test
   (:require [clojure.test :refer [deftest is testing]]
-            [jq.core :as jq]))
+            [jq.core :as jq])
+  (:import (com.fasterxml.jackson.databind ObjectMapper)))
 
 (deftest raw-execute
   (testing "length function"
@@ -29,3 +30,10 @@
           query "map(.+1)"
           processor-fn (jq/processor query)]
       (is (= "[2,3,4]" (processor-fn data))))))
+
+(deftest json-node-processor
+  (testing "mapping function onto values"
+    (let [data "[1,2,3]"
+          query "map(.+1)"
+          processor-fn (jq/json-node-processor query)]
+      (is (= "[2,3,4]" (processor-fn (.readTree (ObjectMapper.) data)))))))

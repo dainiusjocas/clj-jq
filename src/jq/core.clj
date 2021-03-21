@@ -12,9 +12,7 @@
   "Scope that contains all the available Builtin functions."
   (let [scope (Scope/newEmptyScope)]
     ; Load all the functions available for the JQ-1.6
-    (.loadFunctions (BuiltinFunctionLoader/getInstance)
-                    jq-version
-                    scope)
+    (.loadFunctions (BuiltinFunctionLoader/getInstance) jq-version scope)
     scope))
 
 ; Helper interface that specifies a method to get a string value.
@@ -35,16 +33,18 @@
   [^String query]
   (JsonQuery/compile query jq-version))
 
-(defn query-data
+(defn query-json-node
   "Given a JSON data string and a JsonQuery object applies the query
   on the JSON data string and return the resulting JSON string."
-  [^String data ^JsonQuery query]
+  [^JsonNode data ^JsonQuery query]
   (let [output-container (OutputContainer. nil)]
-    (.apply query
-            (Scope/newChildScope root-scope)
-            (.readTree mapper data)
-            output-container)
+    (.apply query (Scope/newChildScope root-scope) data output-container)
     (.getValue output-container)))
+
+(defn ^String query-data
+  "Reads data JSON string into a JsonNode and passes to the query executor."
+  [^String data ^JsonQuery query]
+  (query-json-node (.readTree mapper data) query))
 
 ; jq docs http://manpages.ubuntu.com/manpages/hirsute/man1/jq.1.html
 (defn execute
@@ -52,6 +52,14 @@
   returns a JSON string result of (2) applied on (1)."
   [^String data ^String query]
   (query-data data (compile-query query)))
+
+(defn json-node-processor
+  "Given a JQ query string (2) compiles it and returns a function that given
+  a JsonNode object (2) will return a JSON string with (1) applied on (2)."
+  [^String query]
+  (let [^JsonQuery query (compile-query query)]
+    (fn [^JsonNode data]
+      (query-json-node data query))))
 
 (defn processor
   "Given a JQ query string (2) compiles it and returns a function that given
