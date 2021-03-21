@@ -1,5 +1,6 @@
 [![Clojars Project](https://img.shields.io/clojars/v/lt.jocas/clj-jq.svg)](https://clojars.org/lt.jocas/clj-jq)
 [![cljdoc badge](https://cljdoc.org/badge/lt.jocas/clj-jq)](https://cljdoc.org/d/lt.jocas/clj-jq/CURRENT)
+[![Tests](https://github.com/dainiusjocas/clj-jq/actions/workflows/test.yml/badge.svg)](https://github.com/dainiusjocas/clj-jq/actions/workflows/test.yml)
 
 # clj-jq
 
