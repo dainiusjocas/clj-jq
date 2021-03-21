@@ -12,9 +12,7 @@
   "Scope that contains all the available Builtin functions."
   (let [scope (Scope/newEmptyScope)]
     ; Load all the functions available for the JQ-1.6
-    (.loadFunctions (BuiltinFunctionLoader/getInstance)
-                    jq-version
-                    scope)
+    (.loadFunctions (BuiltinFunctionLoader/getInstance) jq-version scope)
     scope))
 
 ; Helper interface that specifies a method to get a string value.
