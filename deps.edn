@@ -1,12 +1,12 @@
 {:paths
  ["src"]
  :deps
- {net.thisptr/jackson-jq                      {:mvn/version "1.0.0-preview.20201123"}
-  com.fasterxml.jackson.core/jackson-databind {:mvn/version "2.12.2"}}
+ {net.thisptr/jackson-jq                      {:mvn/version "1.0.0-preview.20210610"}
+  com.fasterxml.jackson.core/jackson-databind {:mvn/version "2.12.4"}}
  :aliases
  {:dev
   {:extra-paths ["dev" "classes" "test" "test/resources"]
-   :extra-deps  {org.clojure/tools.deps.alpha {:mvn/version "0.11.905"
+   :extra-deps  {org.clojure/tools.deps.alpha {:mvn/version "0.12.985"
                                                :exclusions  [org.slf4j/slf4j-log4j12
                                                              org.slf4j/slf4j-api
                                                              org.slf4j/slf4j-nop]}
@@ -14,15 +14,15 @@
   :test
   {:extra-paths ["test" "test/resources"]
    :extra-deps  {com.cognitect/test-runner {:git/url "https://github.com/cognitect-labs/test-runner.git"
-                                            :sha     "b6b3193fcc42659d7e46ecd1884a228993441182"}}
+                                            :sha     "f597341b6ca7bb4cf027e0a34a6710ca9cb969da"}}
    :main-opts   ["-m" "cognitect.test-runner"]}
   :uberjar
-  {:replace-deps {com.github.seancorfield/depstar {:mvn/version "2.0.206"}}
+  {:replace-deps {com.github.seancorfield/depstar {:mvn/version "2.1.253"}}
    :exec-fn      hf.depstar/uberjar
    :exec-args    {:aot true}}
   :clj-kondo
   {:main-opts  ["-m" "clj-kondo.main" "--lint" "src" "test"]
-   :extra-deps {clj-kondo/clj-kondo {:mvn/version "2021.03.03"}}
+   :extra-deps {clj-kondo/clj-kondo {:mvn/version "2021.06.18"}}
    :jvm-opts   ["-Dclojure.main.report=stderr"]}
   :cli
   {:extra-paths ["cli" "classes" "resources"]
