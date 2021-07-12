@@ -24,6 +24,7 @@ jobs:
         uses: actions/setup-java@v2.1.0
         with:
           java-version: 11
+          distribution: 'adopt'
 
       - name: Publish to Clojars
         run: mvn --batch-mode -s clojars-settings.xml deploy
