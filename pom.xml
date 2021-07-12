@@ -4,7 +4,7 @@
   <packaging>jar</packaging>
   <groupId>lt.jocas</groupId>
   <artifactId>clj-jq</artifactId>
-  <version>1.0.4</version>
+  <version>1.0.5-SNAPSHOT</version>
   <name>clj-jq</name>
   <description>jq processor for JSON data</description>
   <url>https://github.com/dainiusjocas/clj-jq</url>
@@ -59,7 +59,7 @@
   <scm>
     <connection>scm:git:git://github.com/dainiusjocas/clj-jq.git</connection>
     <developerConnection>scm:git:ssh://git@github.com/dainiusjocas/clj-jq.git</developerConnection>
-    <tag>clj-jq-1.0.4</tag>
+    <tag>main</tag>
     <url>https://github.com/dainiusjocas/clj-jq</url>
   </scm>
   <distributionManagement>
