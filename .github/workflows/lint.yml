@@ -17,7 +17,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-      - uses: DeLaGuardo/clojure-lint-action@v1
+      - uses: DeLaGuardo/clojure-lint-action@master
         with:
           clj-kondo-args: --lint src
           # secrets.GITHUB_TOKEN is needed here
