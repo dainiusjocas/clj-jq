@@ -1,4 +1,4 @@
-name: clj-kondo linting
+name: Native Image build
 
 on:
   push:
@@ -41,4 +41,5 @@ jobs:
 
       - name: Compile the native image
         run: |
-          ./script/compile
+          ls
+          bash script/compile
