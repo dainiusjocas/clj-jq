@@ -3,7 +3,7 @@ name: Deploy to Clojars
 on:
   push:
     tags:
-      - clj-jq-*
+      - 2-*
 
 jobs:
   deploy-to-clojars:
