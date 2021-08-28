@@ -21,8 +21,7 @@ args=( "-jar" "target/clj-jq-uber.jar"
        "-H:Log=registerResource:"
        "--verbose"
        "--no-fallback"
-       "--no-server"
-       "-J-Xmx3g" )
+       "-J-Xmx8g" )
 
 if [ "$CLJ_JQ_STATIC" = "true" ]; then
     args+=("--static")

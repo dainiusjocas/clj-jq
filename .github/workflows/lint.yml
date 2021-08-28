@@ -3,7 +3,7 @@ name: clj-kondo linting
 on:
   push:
     branches:
-      - '*'
+      - '**'
       - '!clj-jq-*'
     tags:
       - '!clj-jq-*'
@@ -11,7 +11,7 @@ on:
       - 'pom.xml'
 
 jobs:
-  build:
+  lint-code:
 
     runs-on: ubuntu-latest
 
@@ -19,7 +19,7 @@ jobs:
       - uses: actions/checkout@v2
       - uses: DeLaGuardo/clojure-lint-action@master
         with:
-          clj-kondo-args: --lint src
+          clj-kondo-args: --lint src test
           # secrets.GITHUB_TOKEN is needed here
           # to publish annotations back to github
           # this action is not storing or sending it anywhere

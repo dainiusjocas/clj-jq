@@ -10,16 +10,16 @@ lint:
 check-deps:
 	clojure -Sdeps '{:deps {antq/antq {:mvn/version "RELEASE"}}}' -M -m antq.core
 
+.PHONY: pom.xml
+pom.xml:
+	clojure -Spom
+
 .PHONY: uberhar
-uberjar:
+uberjar: pom.xml
 	clojure -X:uberjar \
 	:jar target/clj-jq-uber.jar \
 	:main-class jq.cli \
 	:aliases '[:cli]'
-
-.PHONY: pom.xml
-pom.xml:
-	clojure -Spom
 
 .PHONY: release
 release:
