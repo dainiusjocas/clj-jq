@@ -6,7 +6,7 @@ on:
       - 'chore/**'
 
 jobs:
-  sample-job:
+  native-image-build:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -44,5 +44,6 @@ jobs:
 
       - name: Compile the native image
         run: |
-          ls
-          bash script/compile
+          echo "compiling"
+          gh
+          # bash script/compile
