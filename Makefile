@@ -22,10 +22,15 @@ release:
 	clojure -Spom
 	mvn release:prepare
 
+.PHONY: deploy-to-clojars
+deploy-to-clojars:
+	clojure -T:build jar
+	clojure -X:deploy
+
 .PHONY: native-image
 native-image: uberjar
 	CLJ_JQ_STATIC=false ./script/compile
 
 .PHONY: static-native-image
-static-native-image:
+static-native-image: uberjar
 	CLJ_JQ_STATIC=true ./script/compile
