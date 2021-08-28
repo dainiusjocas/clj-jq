@@ -12,8 +12,6 @@
 (defn current-version []
   (let [branch-name-str (str/trim (branch-name))
         tag (str/trim (subs (latest-tag) 1))]
-    (println ">>>BRANCH_NAME:" branch-name-str)
-    (println ">>>TAG:" tag)
     (if (or (= "main" branch-name-str)
             (str/blank? branch-name-str))
       (format "%s" tag)

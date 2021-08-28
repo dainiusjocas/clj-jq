@@ -1,4 +1,4 @@
-name: Deploy to Clojars
+name: Create a release of clj-jq
 
 on:
   push:
@@ -6,6 +6,17 @@ on:
       - 'v*'
 
 jobs:
+  create-gh-release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+      - name: Create a clj-jq Release
+        uses: elgohr/Github-Release-Action@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
+        with:
+          args: Please check Changelog for important updates.
+
   deploy-to-clojars:
 
     runs-on: ubuntu-latest
