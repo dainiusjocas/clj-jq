@@ -16,3 +16,6 @@ pom.xml.asc
 clj-jq.iml
 .env
 clj-jq
+clj-jq.build_artifacts.txt
+release.properties
+pom.xml.releaseBackup
