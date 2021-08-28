@@ -2,8 +2,8 @@ name: Deploy to Clojars
 
 on:
   push:
-    branches:
-      - '2-*'
+    tags:
+      - 'v*'
 
 jobs:
   deploy-to-clojars:
@@ -36,9 +36,7 @@ jobs:
         run: |
           clojure -T:build jar
           cat resources/CLJ_JQ_VERSION
-          cat target/classes/META-INF/maven/lt.jocas/clj-jq/pom.xml
-
-#          clojure -X:deploy
+          clojure -X:deploy
         env:
           CLOJARS_USERNAME: ${{ secrets.CLOJARS_USERNAME }}
           CLOJARS_PASSWORD: ${{ secrets.CLOJARS_PASSWORD }}
