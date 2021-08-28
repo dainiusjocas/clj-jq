@@ -45,6 +45,12 @@ jobs:
       - name: Compile the native image
         run: |
           echo "compiling"
-          gh
-          gh release upload clj-jq-1.0.4 deps.edn
           # bash script/compile
+
+      - name: Upload binary to release
+        uses: svenstaro/upload-release-action@v1-release
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: deps.edn
+          asset_name: deps.edn
+          tag: clj-jq-1.0.4
