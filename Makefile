@@ -10,16 +10,10 @@ lint:
 check-deps:
 	clojure -Sdeps '{:deps {antq/antq {:mvn/version "RELEASE"}}}' -M -m antq.core
 
-.PHONY: pom.xml
-pom.xml:
-	clojure -Spom
-
-.PHONY: uberhar
-uberjar: pom.xml
-	clojure -X:uberjar \
-	:jar target/clj-jq-uber.jar \
-	:main-class jq.cli \
-	:aliases '[:cli]'
+.PHONY: uberjar
+uberjar:
+	clojure -T:build clean
+	clojure -T:build uber
 
 .PHONY: release
 release:
@@ -29,7 +23,7 @@ release:
 	mvn release:prepare
 
 .PHONY: native-image
-native-image:
+native-image: uberjar
 	CLJ_JQ_STATIC=false ./script/compile
 
 .PHONY: static-native-image
