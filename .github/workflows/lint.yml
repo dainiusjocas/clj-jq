@@ -3,7 +3,6 @@ name: clj-kondo linting
 on:
   push:
     branches:
-      - '*'
       - '**'
       - '!clj-jq-*'
     tags:
