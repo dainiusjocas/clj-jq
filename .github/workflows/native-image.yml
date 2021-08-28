@@ -20,10 +20,13 @@ jobs:
           - os: windows-latest
             gu-binary: gu
     steps:
+      - uses: actions/checkout@v2
+
       - name: Install clojure tools-deps
         uses: DeLaGuardo/setup-clojure@master
         with:
           tools-deps: 1.10.3.956
+
       - name: Setup Graalvm
         id: setup-graalvm
         uses: DeLaGuardo/setup-graalvm@master
