@@ -18,8 +18,9 @@
   (b/delete {:path "target"}))
 
 (defn version-file [_]
-  (b/write-file {:path   "resources/CLJ_JQ_VERSION"
-                 :string version}))
+  #_(b/write-file {:path   "resources/CLJ_JQ_VERSION"
+                 :string version})
+  (spit "resources/CLJ_JQ_VERSION" version))
 
 (defn prep [_]
   (b/write-pom {:src-pom   "./pom.xml"
@@ -56,10 +57,5 @@
                 :src-dirs  ["src"]})
   (b/copy-dir {:src-dirs   ["src"]
                :target-dir class-dir})
-  (b/write-pom {:class-dir "."
-                :lib       lib
-                :version   version
-                :basis     basis
-                :src-dirs  ["src"]})
   (b/jar {:class-dir class-dir
           :jar-file  lib-jar-file}))
