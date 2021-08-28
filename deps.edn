@@ -16,14 +16,20 @@
    :extra-deps  {com.cognitect/test-runner {:git/url "https://github.com/cognitect-labs/test-runner.git"
                                             :sha     "e7660458ce25bc4acb4ccc3e2415aae0a4907198"}}
    :main-opts   ["-m" "cognitect.test-runner"]}
-  :uberjar
-  {:replace-deps {com.github.seancorfield/depstar {:mvn/version "2.1.278"}}
-   :exec-fn      hf.depstar/uberjar
-   :exec-args    {:aot true}}
   :clj-kondo
   {:main-opts  ["-m" "clj-kondo.main" "--lint" "src" "test"]
    :extra-deps {clj-kondo/clj-kondo {:mvn/version "2021.08.06"}}
    :jvm-opts   ["-Dclojure.main.report=stderr"]}
   :cli
   {:extra-paths ["cli" "classes" "resources"]
-   :extra-deps  {org.clojure/tools.cli {:mvn/version "1.0.206"}}}}}
+   :extra-deps  {org.clojure/tools.cli {:mvn/version "1.0.206"}}}
+  :build
+  {:deps {io.github.clojure/tools.build {:git/tag "v0.1.9" :git/sha "6736c83"}}
+   :extra-paths ["build"]
+   :ns-default build}
+  :deploy
+  {:replace-deps {slipset/deps-deploy {:mvn/version "0.1.5"}}
+   :exec-fn deps-deploy.deps-deploy/deploy
+   :exec-args {:installer :remote
+               :pom-file "target/classes/META-INF/maven/lt.jocas/clj-jq/pom.xml"
+               :artifact "target/clj-jq.jar"}}}}

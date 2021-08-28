@@ -12,9 +12,7 @@ export PATH=$GRAALVM_HOME/bin:$PATH
 
 CLJ_JQ_VERSION=$(cat resources/CLJ_JQ_VERSION)
 
-make uberjar
-
-args=( "-jar" "target/clj-jq-uber.jar"
+args=( "-jar" "target/clj-jq-$CLJ_JQ_VERSION-standalone.jar"
        "-H:Name=clj-jq"
        "-H:+ReportExceptionStackTraces"
        "--initialize-at-build-time"
