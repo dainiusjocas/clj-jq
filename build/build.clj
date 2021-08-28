@@ -14,7 +14,8 @@
         tag (str/trim (subs (latest-tag) 1))]
     (println ">>>BRANCH_NAME:" branch-name-str)
     (println ">>>TAG:" tag)
-    (if (= "main" branch-name-str)
+    (if (or (= "main" branch-name-str)
+            (str/blank? branch-name-str))
       (format "%s" tag)
       (format "%s-%s" tag "SNAPSHOT"))))
 
