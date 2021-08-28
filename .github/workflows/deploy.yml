@@ -35,6 +35,8 @@ jobs:
       - name: Publish lib to Clojars
         run: |
           clojure -T:build jar
+          cat resources/CLJ_JQ_VERSION
+          cat target/classes/META-INF/maven/lt.jocas/clj-jq/pom.xml
           clojure -X:deploy
         env:
           CLOJARS_USERNAME: ${{ secrets.CLOJARS_USERNAME }}
