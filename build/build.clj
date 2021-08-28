@@ -10,8 +10,11 @@
   (:out (shell/sh "git" "describe" "--tags" "--abbrev=0")))
 
 (defn current-version []
-  (let [tag (str/trim (subs (latest-tag) 1))]
-    (if (= "main" (str/trim (branch-name)))
+  (let [branch-name-str (str/trim (branch-name))
+        tag (str/trim (subs (latest-tag) 1))]
+    (println ">>>BRANCH_NAME:" branch-name-str)
+    (println ">>>TAG:" tag)
+    (if (= "main" branch-name-str)
       (format "%s" tag)
       (format "%s-%s" tag "SNAPSHOT"))))
 
