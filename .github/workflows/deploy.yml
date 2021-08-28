@@ -2,8 +2,8 @@ name: Deploy to Clojars
 
 on:
   push:
-    tags:
-      - 2-*
+    branches:
+      - '2-*'
 
 jobs:
   deploy-to-clojars:
