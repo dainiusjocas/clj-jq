@@ -13,7 +13,7 @@ jobs:
       - name: Create a clj-jq Release
         uses: elgohr/Github-Release-Action@master
         env:
-          GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           args: Please check Changelog for important updates.
 
