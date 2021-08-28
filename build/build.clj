@@ -1,14 +1,22 @@
 (ns build
   (:require [clojure.tools.build.api :as b]
-            [clojure.java.shell :as shell]))
+            [clojure.java.shell :as shell]
+            [clojure.string :as str]))
 
 (defn branch-name []
   (:out (shell/sh "git" "rev-parse" "--abbrev-ref" "HEAD")))
 
+(defn latest-tag []
+  (:out (shell/sh "git" "describe" "--tags" "--abbrev=0")))
+
+(defn current-version []
+  (let [tag (str/trim (subs (latest-tag) 1))]
+    (if (= "main" (str/trim (branch-name)))
+      (format "%s" tag)
+      (format "%s-%s" tag "SNAPSHOT"))))
+
 (def lib 'lt.jocas/clj-jq)
-(def version (if (= "main" (branch-name))
-               (format "1.0.%s" (b/git-count-revs nil))
-               (format "1.0.%s-%s" (b/git-count-revs nil) "SNAPSHOT")))
+(def version (current-version))
 (def class-dir "target/classes")
 (def basis (b/create-basis {:project "deps.edn"
                             :aliases [:cli]}))
