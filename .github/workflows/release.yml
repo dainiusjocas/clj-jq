@@ -21,8 +21,7 @@ jobs:
           name: Release ${{ env.RELEASE_VERSION }}
           body: |
             See [CHANGELOG.md](https://github.com/dainiusjocas/clj-jq/blob/main/CHANGELOG.md) for details.
-            If you are using macOS Catalina and later you may need to remove the quarantine attribute from the bits before you can use them.
-            To do this, run the following:
+            If you are using macOS Catalina and later you may need to remove the quarantine attribute from the bits before you can use them. To do this, run the following:
             ```
             sudo xattr -r -d com.apple.quarantine clj-jq
             ```
