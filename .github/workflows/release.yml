@@ -11,12 +11,21 @@ jobs:
     steps:
       - uses: actions/checkout@master
 
+      - name: Set env
+        run: echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
+
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
           tag_name: ${{ github.ref }}
-          name: Release ${{ github.ref }}
-          body: "First change"
+          name: Release ${{ env.RELEASE_VERSION }}
+          body: |
+            "See [CHANGELOG.md](https://github.com/dainiusjocas/clj-jq/blob/main/CHANGELOG.md) for details."
+            "If you are using macOS Catalina and later you may need to remove the quarantine attribute from the bits before you can use them."
+            "To do this, run the following:"
+            "```"
+            "sudo xattr -r -d com.apple.quarantine clj-jq"
+            "```"
           draft: true
 
   deploy-to-clojars:
@@ -49,7 +58,7 @@ jobs:
         run: |
           clojure -T:build jar
           cat resources/CLJ_JQ_VERSION
-          clojure -X:deploy
+#          clojure -X:deploy
         env:
           CLOJARS_USERNAME: ${{ secrets.CLOJARS_USERNAME }}
           CLOJARS_PASSWORD: ${{ secrets.CLOJARS_PASSWORD }}
