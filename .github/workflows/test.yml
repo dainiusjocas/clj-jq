@@ -38,5 +38,5 @@ jobs:
 
       - name: Unit Tests
         run: |
-          git branch –show-current
+          echo $(git branch --show-current)
           clojure -M:dev:test
