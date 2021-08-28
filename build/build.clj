@@ -4,7 +4,7 @@
             [clojure.string :as str]))
 
 (defn branch-name []
-  (:out (shell/sh "git" "rev-parse" "--abbrev-ref" "HEAD")))
+  (:out (shell/sh "git" "branch" "--show-current")))
 
 (defn latest-tag []
   (:out (shell/sh "git" "describe" "--tags" "--abbrev=0")))

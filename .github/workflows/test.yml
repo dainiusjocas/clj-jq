@@ -37,4 +37,6 @@ jobs:
           tools-deps: 1.10.3.956
 
       - name: Unit Tests
-        run: clojure -A:dev:test
+        run: |
+          clojure -A:dev:test
+          git branch –show-current
