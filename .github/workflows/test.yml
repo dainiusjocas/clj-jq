@@ -39,4 +39,5 @@ jobs:
       - name: Unit Tests
         run: |
           echo $(git branch --show-current)
+          git rev-parse --abbrev-ref HEAD
           clojure -M:dev:test

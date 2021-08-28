@@ -12,6 +12,7 @@
 (defn current-version []
   (let [branch-name-str (str/trim (branch-name))
         tag (str/trim (subs (latest-tag) 1))]
+    (println ">>>BNAME:" (:out (shell/sh "git" "rev-parse" "--abbrev-ref" "HEAD")))
     (println ">>>BRANCH_NAME:" branch-name-str)
     (println ">>>TAG:" tag)
     (if (= "main" branch-name-str)
