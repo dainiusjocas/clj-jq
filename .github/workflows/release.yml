@@ -15,7 +15,11 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          args: Please check Changelog for important updates.
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          args: "Please check Changelog for important updates."
+          body: "First change"
+          draft: true
 
   deploy-to-clojars:
 
