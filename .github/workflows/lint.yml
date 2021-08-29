@@ -4,9 +4,9 @@ on:
   push:
     branches:
       - '**'
-      - '!clj-jq-*'
+      - '!v*'
     tags:
-      - '!clj-jq-*'
+      - '!v*'
     paths-ignore:
       - 'pom.xml'
 
