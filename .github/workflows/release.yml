@@ -27,6 +27,23 @@ jobs:
             ```
           draft: true
 
+  compile-linux-native-image-and-put-upload-into-release:
+    needs: create-gh-release
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+
+      - name: Set env
+        run: echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENVs
+
+      - name: Upload binary to the release
+        uses: svenstaro/upload-release-action@v1-release
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: deps.edn
+          asset_name: deps.edn
+          tag: ${{ env.RELEASE_VERSION }}
+
   deploy-to-clojars:
 
     runs-on: ubuntu-latest
