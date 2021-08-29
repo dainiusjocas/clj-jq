@@ -34,7 +34,7 @@ jobs:
       - uses: actions/checkout@master
 
       - name: Set env
-        run: echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENVs
+        run: echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
 
       - name: Upload binary to the release
         uses: svenstaro/upload-release-action@v1-release
