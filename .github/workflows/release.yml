@@ -37,12 +37,11 @@ jobs:
         run: echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
 
       - name: Upload binary to the release
-        uses: svenstaro/upload-release-action@v1-release
+        uses: softprops/action-gh-release@v1
         with:
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: deps.edn
-          asset_name: deps.edn
-          tag: ${{ env.RELEASE_VERSION }}
+          tag_name: ${{ env.RELEASE_VERSION }}
+          files: |
+            deps.edn
 
   deploy-to-clojars:
 
