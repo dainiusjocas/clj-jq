@@ -75,17 +75,17 @@ jobs:
       - name: Compile native image
         run: |
           bash script/compile
-          zip clj-jq-${GITHUB_REF#v*}-linux-amd64.zip clj-jq
+          zip clj-jq-${RELEASE_VERSION#v*}-linux-amd64.zip clj-jq
 
-      - name: Upload binary to the release
+      - name: Upload binaries to the release
         uses: softprops/action-gh-release@v1
         with:
           tag_name: ${{ env.RELEASE_VERSION }}
           name: Release ${{ env.RELEASE_VERSION }}
           draft: true
           files: |
-            clj-jq-${GITHUB_REF#v*}-linux-amd64.zip
-            target/clj-jq-${GITHUB_REF#v*}-standalone.jar
+            clj-jq-${RELEASE_VERSION#v*}-linux-amd64.zip
+            target/clj-jq-${RELEASE_VERSION#v*}-standalone.jar
 
   deploy-to-clojars:
 
