@@ -84,8 +84,8 @@ jobs:
           name: Release ${{ env.RELEASE_VERSION }}
           draft: true
           files: |
-            clj-jq-.*-linux-amd64.zip
-            target/clj-jq-.*-standalone.jar
+            clj-jq-*-linux-amd64.zip
+            target/clj-jq-*-standalone.jar
 
   deploy-to-clojars:
 
