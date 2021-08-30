@@ -73,7 +73,7 @@ jobs:
           clojure -T:build uber
 
       - name: Setup MUSL
-      - run: |
+        run: |
           bash script/setup-musl
 
       - name: Set with MUSL added to the PATH
