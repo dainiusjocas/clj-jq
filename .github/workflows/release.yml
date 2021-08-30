@@ -72,10 +72,19 @@ jobs:
           clojure -T:build clean
           clojure -T:build uber
 
+      - name: Setup MUSL
+      - run: |
+          bash script/setup-musl
+
       - name: Compile native image
         run: |
-          bash script/compile
-          zip clj-jq-${RELEASE_VERSION#v*}-linux-amd64.zip clj-jq
+#          CLJ_JQ_STATIC=false bash script/compile
+#          zip clj-jq-${RELEASE_VERSION#v*}-linux-amd64.zip clj-jq
+          echo "COMPILING"
+          echo "MUSL_DIR=${HOME}/.musl" >> $GITHUB_ENV
+          echo "PATH=$PATH:${MUSL_DIR}/bin" >> $GITHUB_ENV
+          CLJ_JQ_STATIC=true bash script/compile
+          zip clj-jq-${RELEASE_VERSION#v*}-linux-amd64-static.zip clj-jq
 
       - name: Upload binaries to the release
         uses: softprops/action-gh-release@v1
@@ -85,6 +94,7 @@ jobs:
           draft: true
           files: |
             clj-jq-*-linux-amd64.zip
+            clj-jq-*-linux-amd64-static.zip
             target/clj-jq-*-standalone.jar
 
   deploy-to-clojars:
