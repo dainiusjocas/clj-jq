@@ -72,6 +72,11 @@ jobs:
           clojure -T:build clean
           clojure -T:build uber
 
+      - name: Compile native image
+        run: |
+          CLJ_JQ_STATIC=false bash script/compile
+          zip clj-jq-${RELEASE_VERSION#v*}-linux-amd64.zip clj-jq
+
       - name: Setup MUSL
         run: |
           bash script/setup-musl
@@ -127,7 +132,7 @@ jobs:
         run: |
           clojure -T:build jar
           cat resources/CLJ_JQ_VERSION
-#          clojure -X:deploy
+          clojure -X:deploy
         env:
           CLOJARS_USERNAME: ${{ secrets.CLOJARS_USERNAME }}
           CLOJARS_PASSWORD: ${{ secrets.CLOJARS_PASSWORD }}
