@@ -78,8 +78,6 @@ jobs:
 
       - name: Compile native image
         run: |
-#          CLJ_JQ_STATIC=false bash script/compile
-#          zip clj-jq-${RELEASE_VERSION#v*}-linux-amd64.zip clj-jq
           echo "COMPILING"
           echo "MUSL_DIR=${HOME}/.musl" >> $GITHUB_ENV
           echo "PATH=$PATH:${MUSL_DIR}/bin" >> $GITHUB_ENV
