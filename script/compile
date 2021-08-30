@@ -23,6 +23,9 @@ args=( "-jar" "target/clj-jq-$CLJ_JQ_VERSION-standalone.jar"
 
 if [ "$CLJ_JQ_STATIC" = "true" ]; then
     args+=("--static")
+    if [ "$CLJ_JQ_MUSL" = "true" ]; then
+        args+=("--libc=musl")
+    fi
 fi
 
 "$GRAALVM_HOME/bin/native-image" "${args[@]}"
