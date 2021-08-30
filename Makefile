@@ -15,13 +15,6 @@ uberjar:
 	clojure -T:build clean
 	clojure -T:build uber
 
-.PHONY: release
-release:
-	rm release.properties || true
-	rm pom.xml.releaseBackup || true
-	clojure -Spom
-	mvn release:prepare
-
 .PHONY: deploy-to-clojars
 deploy-to-clojars:
 	clojure -T:build jar

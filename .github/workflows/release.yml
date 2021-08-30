@@ -29,12 +29,53 @@ jobs:
 
   compile-linux-native-image-and-put-upload-into-release:
     needs: create-gh-release
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ ubuntu-latest ]
+        gu-binary: [ gu, gu.cmd ]
+        exclude:
+          - os: ubuntu-latest
+            gu-binary: gu.cmd
+          - os: macos-latest
+            gu-binary: gu.cmd
+          - os: windows-latest
+            gu-binary: gu
     steps:
       - uses: actions/checkout@master
 
       - name: Set env
         run: echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
+
+      - name: Setup Graalvm
+        id: setup-graalvm
+        uses: DeLaGuardo/setup-graalvm@master
+        with:
+          # GraalVM version, no pattern syntax available atm
+          graalvm: '21.2.0'
+          # Java version, optional, defaults to 'java8'. Available options are 'java8' and 'java11'.
+          java: 'java11'
+          # Architecture flag, optional, defaults to 'amd64'. Available options are 'amd64' and 'aarch64'. Later is available only for linux runners.
+          arch: 'amd64'
+
+      - name: Install native-image component
+        run: |
+          ${{ matrix.gu-binary }} install native-image
+
+      - name: Install clojure tools-deps
+        uses: DeLaGuardo/setup-clojure@master
+        with:
+          tools-deps: 1.10.3.956
+
+      - name: Compile uberjar
+        run: |
+          clojure -T:build clean
+          clojure -T:build uber
+
+      - name: Compile native image
+        run: |
+          bash script/compile
+          zip clj-jq-${GITHUB_REF#v*}-linux-amd64.zip clj-jq
 
       - name: Upload binary to the release
         uses: softprops/action-gh-release@v1
@@ -43,7 +84,8 @@ jobs:
           name: Release ${{ env.RELEASE_VERSION }}
           draft: true
           files: |
-            deps.edn
+            clj-jq-${GITHUB_REF#v*}-linux-amd64.zip
+            target/clj-jq-${GITHUB_REF#v*}-standalone.jar
 
   deploy-to-clojars:
 
