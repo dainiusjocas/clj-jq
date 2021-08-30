@@ -76,11 +76,13 @@ jobs:
       - run: |
           bash script/setup-musl
 
-      - name: Compile native image
+      - name: Set with MUSL added to the PATH
         run: |
-          echo "COMPILING"
           echo "MUSL_DIR=${HOME}/.musl" >> $GITHUB_ENV
           echo "PATH=$PATH:${MUSL_DIR}/bin" >> $GITHUB_ENV
+
+      - name: Compile static native image
+        run: |
           CLJ_JQ_STATIC=true bash script/compile
           zip clj-jq-${RELEASE_VERSION#v*}-linux-amd64-static.zip clj-jq
 
