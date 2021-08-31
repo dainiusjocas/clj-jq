@@ -23,7 +23,9 @@ jobs:
       - name: Check condition
         if: ${{ matrix.platform == 'linux-20.04' }}
         run: |
+          echo "FOO BAR" > file-${{ matrix.platform }}.txt
           echo ">>>>Should run only on ubuntu 20.04" ${{ matrix.platform }} ">>>>>>" ${{ matrix.os }}
+          cat file-${{ matrix.platform }}.txt
 
 
       - name: Check matrix combinations
