@@ -36,7 +36,7 @@ jobs:
         run: |
           clojure -e "(+ 1 1)"
           echo ">>>>"
-          clojure -T:build windows-uberjar
+          clojure -T:build uber
         shell: powershell
       - name: Show files
         shell: powershell

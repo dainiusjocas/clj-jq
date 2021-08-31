@@ -54,18 +54,6 @@
            :basis     basis
            :manifest  {"Main-Class" "jq.cli"}}))
 
-(defn windows-uberjar [args]
-      (println ">>>>" args)
-      (b/copy-dir {:src-dirs   ["src" "resources"]
-                   :target-dir class-dir})
-      (b/compile-clj {:basis     basis
-                      :src-dirs  ["src" "cli"]
-                      :class-dir class-dir})
-      (b/uber {:class-dir class-dir
-               :uber-file uber-file
-               :basis     basis
-               :manifest  {"Main-Class" "jq.cli"}}))
-
 (def lib-basis (b/create-basis {:project "deps.edn"}))
 (def lib-jar-file (format "target/%s.jar" (name lib)))
 
