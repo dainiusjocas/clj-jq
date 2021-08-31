@@ -12,7 +12,6 @@ jobs:
         include:
           - os: windows-latest
             platform: windows
-            gu-binary: gu.cmd
             arch: 'amd64'
     steps:
       - uses: actions/checkout@master
@@ -34,44 +33,34 @@ jobs:
         with:
           tools-deps: 1.10.3.956
           cli: 1.10.3.956
+
       - name: Compile uberjar on windows
         if: ${{ matrix.os == 'windows-latest' }}
         run: |
           clojure -T:build uber
         shell: powershell
-      - name: Show files
-        shell: powershell
-        run: |
-          ls .
-          ls target
+
       - uses: ilammy/msvc-dev-cmd@v1.5.0
       - uses: microsoft/setup-msbuild@v1
       - name: Set env
         shell: powershell
         run: |
-          echo $env:RELEASE_VERSION
-          echo "$env:RELEASE_VERSION"
-          echo %RELEASE_VERSION%
-          echo ${cat resources/CLJ_JQ_VERSION}
-          echo ("CLJ_JQ_VERSION=" + $(cat resources/CLJ_JQ_VERSION))
           echo ("CLJ_JQ_VERSION=" + $(cat resources/CLJ_JQ_VERSION)) >> $env:GITHUB_ENV
-          echo $env:CLJ_JQ_VERSION
-          echo "$env:CLJ_JQ_VERSION"
-          echo %CLJ_JQ_VERSION%
+
       - uses: ayltai/setup-graalvm@v1
         with:
           java-version: 11
           graalvm-version: 21.2.0
           native-image: true
-      - name: Build with Maven
+
+      - name: Build native image
         run: |
-          echo $env:CLJ_JQ_VERSION
-          echo "$env:CLJ_JQ_VERSION"
-          echo %CLJ_JQ_VERSION%
           native-image -jar "target/clj-jq-$env:CLJ_JQ_VERSION-standalone.jar" -H:Name=clj-jq -H:+ReportExceptionStackTraces --initialize-at-build-time --verbose --no-fallback -J-Xmx8g
         shell: powershell
-      - name: Show files
+
+      - name: Zip executable
         shell: powershell
         run: |
+          tar.exe -a -c -f clj-jq-${{ env.RELEASE_VERSION }}-${{ matrix.platform }}-${{ matrix.arch }}.zip clj-jq.exe
           ls .
           ./clj-jq.exe -h
