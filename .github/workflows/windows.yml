@@ -37,4 +37,4 @@ jobs:
         run: |
           clojure -T:build clean
           clojure -T:build uber
-          ls target
+          ls .
