@@ -36,14 +36,13 @@ jobs:
       - name: Compile uberjar on windows
         if: ${{ matrix.os == 'windows-latest' }}
         run: |
-          clojure -e "(+ 1 1)"
-          echo ">>>>"
           clojure -T:build uber
         shell: powershell
       - name: Show files
         shell: powershell
         run: |
           ls .
+          ls target
 #      - uses: ilammy/msvc-dev-cmd@v1.5.0
 #      - uses: microsoft/setup-msbuild@v1
 #      - uses: ayltai/setup-graalvm@v1
