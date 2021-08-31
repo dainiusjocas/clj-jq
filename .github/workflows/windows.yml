@@ -1,0 +1,38 @@
+name: TEST JOB
+
+on: [push]
+
+jobs:
+
+  compile-windows-native-image:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ windows-latest ]
+        include:
+          - os: windows-latest
+            platform: windows
+            gu-binary: gu.cmd
+            arch: 'amd64'
+    steps:
+      - uses: actions/checkout@master
+
+      - name: Set env
+        run: echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
+
+      - uses: actions/checkout@v2
+      - uses: ilammy/msvc-dev-cmd@v1.5.0
+      - uses: microsoft/setup-msbuild@v1
+      - uses: ayltai/setup-graalvm@v1
+        with:
+          java-version: 11
+          graalvm-version: 21.2.0
+          native-image: true
+      - name: Install clojure tools-deps
+        uses: DeLaGuardo/setup-clojure@master
+        with:
+          tools-deps: 1.10.3.956
+      - name: Compile uberjar
+        run: |
+          clojure -T:build clean
+          clojure -T:build uber
