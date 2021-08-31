@@ -54,8 +54,8 @@ jobs:
           echo "$env:RELEASE_VERSION"
           echo %RELEASE_VERSION%
           echo ${cat resources/CLJ_JQ_VERSION}
-          echo ("CLJ_JQ_VERSION=" + ${cat resources/CLJ_JQ_VERSION})
-          echo ("CLJ_JQ_VERSION=" + ${cat resources/CLJ_JQ_VERSION}) >> $env:GITHUB_ENV
+          echo ("CLJ_JQ_VERSION=" + $(cat resources/CLJ_JQ_VERSION))
+          echo ("CLJ_JQ_VERSION=" + $(cat resources/CLJ_JQ_VERSION)) >> $env:GITHUB_ENV
           echo $env:CLJ_JQ_VERSION
           echo "$env:CLJ_JQ_VERSION"
           echo %CLJ_JQ_VERSION%
@@ -69,7 +69,7 @@ jobs:
           echo $env:CLJ_JQ_VERSION
           echo "$env:CLJ_JQ_VERSION"
           echo %CLJ_JQ_VERSION%
-          native-image -jar "target/clj-jq-${env:CLJ_JQ_VERSION}-standalone.jar" -H:Name=clj-jq -H:+ReportExceptionStackTraces --initialize-at-build-time --verbose --no-fallback -J-Xmx8g
+          native-image -jar "target/clj-jq-$(env:CLJ_JQ_VERSION)-standalone.jar" -H:Name=clj-jq -H:+ReportExceptionStackTraces --initialize-at-build-time --verbose --no-fallback -J-Xmx8g
         shell: powershell
       - name: Show files
         shell: powershell
