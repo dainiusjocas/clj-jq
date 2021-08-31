@@ -1,0 +1,25 @@
+name: TEST JOB
+
+on: [push]
+
+jobs:
+
+  compile-macos-native-image-and-put-upload-into-release:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ ubuntu-18.04, ubuntu-20.04 ]
+        include:
+          - os: ubuntu-18.04
+            platform: linux-18.04
+          - os: ubuntu-20.04
+            platform: linux-20.04
+    steps:
+      - uses: actions/checkout@master
+
+      - name: Set env
+        run: echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
+
+      - name: Check subvariable combinations
+        run: |
+          echo ">>>>>>>" ${{ matrix.platform }} ">>>>>>" ${{ matrix.os }}
