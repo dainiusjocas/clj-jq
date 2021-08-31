@@ -49,6 +49,9 @@ jobs:
       - name: Set env
         shell: powershell
         run: |
+          echo $env:RELEASE_VERSION
+          echo "$env:RELEASE_VERSION"
+          echo %RELEASE_VERSION%
           echo ("CLJ_JQ_VERSION=" + ${cat resources/CLJ_JQ_VERSION}") >> $env:GITHUB_ENV
           echo $env:CLJ_JQ_VERSION
           echo "$env:CLJ_JQ_VERSION"
