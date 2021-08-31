@@ -33,6 +33,8 @@ jobs:
       - name: Compile uberjar
         shell: powershell
         run: |
+          clojure -e "(+ 1 1)"
+          echo ">>>>"
           clojure -T:build windows-uberjar
       - name: Show files
         shell: powershell
