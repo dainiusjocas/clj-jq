@@ -47,14 +47,16 @@ jobs:
       - uses: ilammy/msvc-dev-cmd@v1.5.0
       - uses: microsoft/setup-msbuild@v1
       - name: Set env
-        run: echo "CLJ_JQ_VERSION=${cat resources/CLJ_JQ_VERSION}" >> $GITHUB_ENV
+        run: |
+          echo "CLJ_JQ_VERSION=${cat resources/CLJ_JQ_VERSION}" >> $GITHUB_ENV
+          echo $CLJ_JQ_VERSION
       - uses: ayltai/setup-graalvm@v1
         with:
           java-version: 11
           graalvm-version: 21.2.0
           native-image: true
       - name: Build with Maven
-        run: native-image -jar target/clj-jq-$CLJ_JQ_VERSION-standalone.jar -H:Name=clj-jq -H:+ReportExceptionStackTraces --initialize-at-build-time --verbose --no-fallback -J-Xmx8g
+        run: native-image -jar target/clj-jq-${cat CLJ_JQ_VERSION}-standalone.jar -H:Name=clj-jq -H:+ReportExceptionStackTraces --initialize-at-build-time --verbose --no-fallback -J-Xmx8g
         shell: powershell
       - name: Show files
         shell: powershell
