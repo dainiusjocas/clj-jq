@@ -49,13 +49,19 @@ jobs:
         run: |
           echo "CLJ_JQ_VERSION=${cat resources/CLJ_JQ_VERSION}" >> $GITHUB_ENV
           echo $env:CLJ_JQ_VERSION
+          echo "$env:CLJ_JQ_VERSION"
+          echo %CLJ_JQ_VERSION%
       - uses: ayltai/setup-graalvm@v1
         with:
           java-version: 11
           graalvm-version: 21.2.0
           native-image: true
       - name: Build with Maven
-        run: native-image -jar target/clj-jq-${env:CLJ_JQ_VERSION}-standalone.jar -H:Name=clj-jq -H:+ReportExceptionStackTraces --initialize-at-build-time --verbose --no-fallback -J-Xmx8g
+        run: |
+          echo $env:CLJ_JQ_VERSION
+          echo "$env:CLJ_JQ_VERSION"
+          echo %CLJ_JQ_VERSION%
+          native-image -jar "target/clj-jq-${env:CLJ_JQ_VERSION}-standalone.jar" -H:Name=clj-jq -H:+ReportExceptionStackTraces --initialize-at-build-time --verbose --no-fallback -J-Xmx8g
         shell: powershell
       - name: Show files
         shell: powershell
