@@ -16,6 +16,8 @@ jobs:
             arch: 'amd64'
     steps:
       - uses: actions/checkout@master
+        with:
+          fetch-depth: '0'
 
       - name: Set env
         run: echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
