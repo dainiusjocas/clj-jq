@@ -34,6 +34,9 @@ jobs:
         shell: powershell
         run: |
           clojure -T:build uber
+      - name: Compile uberjar
+        shell: powershell
+        run: |
           ls .
       - uses: ilammy/msvc-dev-cmd@v1.5.0
       - uses: microsoft/setup-msbuild@v1
