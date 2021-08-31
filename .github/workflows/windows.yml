@@ -33,6 +33,8 @@ jobs:
         with:
           tools-deps: 1.10.3.956
       - name: Compile uberjar
+        shell: powershell
         run: |
           clojure -T:build clean
           clojure -T:build uber
+          ls target
