@@ -33,7 +33,6 @@ jobs:
       - name: Compile uberjar
         shell: powershell
         run: |
-          clojure -T:build clean
           clojure -T:build uber
           ls .
       - uses: ilammy/msvc-dev-cmd@v1.5.0
