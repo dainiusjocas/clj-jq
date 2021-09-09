@@ -17,16 +17,16 @@
 
 ; Helper interface that specifies a method to get a string value.
 (definterface IGetter
-  (^String getValue []))
+  (^com.fasterxml.jackson.databind.JsonNode getValue []))
 
 ; Container class helper that implements the net.thisptr.jackson.jq.Output
 ; interface that enables the class to be used as a callback for JQ and exposes the
 ; unsynchronized-mutable container field for the result of the JQ transformation.
-(deftype OutputContainer [^:unsynchronized-mutable ^String container]
+(deftype OutputContainer [^:unsynchronized-mutable ^JsonNode container]
   Output
   (emit [_ json-node] (set! container json-node))
   IGetter
-  (getValue [_] (.writeValueAsString mapper ^JsonNode container)))
+  (getValue [_] container))
 
 (defn ^JsonQuery compile-query
   "Compiles a JQ query string into a JsonQuery object."
@@ -39,7 +39,7 @@
   [^JsonNode data ^JsonQuery query]
   (let [output-container (OutputContainer. nil)]
     (.apply query (Scope/newChildScope root-scope) data output-container)
-    (.getValue output-container)))
+    (.writeValueAsString mapper ^JsonNode (.getValue output-container))))
 
 (defn ^String query-data
   "Reads data JSON string into a JsonNode and passes to the query executor."

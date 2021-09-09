@@ -11,8 +11,9 @@ Available `jq` functions can be found [here](https://github.com/eiiches/jackson-
 ## Alternatives
 
 There is another `jq` library for Clojure: [clj-jq](https://github.com/BrianMWest/clj-jq). 
-This library works by shelling-out to an embedded `jq`. The problem is that it has costs for
-every invocation. Also, it creates difficulties to use this library with the GraalVM native-image.
+This library works by shelling-out to an embedded `jq` instance.
+The problem with this approach is that it has fixed costs for every invocation. 
+Also, it creates difficulties to use this library with the GraalVM native-image.
 
 ## Use cases
 
