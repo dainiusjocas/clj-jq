@@ -3,6 +3,9 @@
             [jq.core :as jq])
   (:import (com.fasterxml.jackson.databind ObjectMapper)))
 
+(defn json-string->json-node [^String json-string]
+  (.readTree (ObjectMapper.) json-string))
+
 (deftest raw-execute
   (testing "length function"
     (let [data "{\"a\":[1,2,3,4,5],\"b\":\"hello\"}"
@@ -36,4 +39,4 @@
     (let [data "[1,2,3]"
           query "map(.+1)"
           processor-fn (jq/json-node-processor query)]
-      (is (= "[2,3,4]" (processor-fn (.readTree (ObjectMapper.) data)))))))
+      (is (= "[2,3,4]" (processor-fn (json-string->json-node data)))))))
