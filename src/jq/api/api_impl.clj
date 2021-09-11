@@ -1,4 +1,6 @@
-(ns jq.api.api-impl
+(ns ^{:doc "Internal implementation details."
+      :no-doc true}
+  jq.api.api-impl
   (:import (net.thisptr.jackson.jq JsonQuery Versions Scope BuiltinFunctionLoader Output)
            (com.fasterxml.jackson.databind ObjectMapper JsonNode)))
 
