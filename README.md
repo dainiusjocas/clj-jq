@@ -50,8 +50,8 @@ Or inline:
 
 ## How to join multiple scripts together
 
-Joining jq scripts is as simple as "piping" output of one script to another:
-join jq script strings with `|` character.
+Joining `jq` scripts is as simple as "piping" output of one script to another:
+join `jq` script strings with `|` character.
 
 ```clojure
 (let [data "[1,2,3]"
