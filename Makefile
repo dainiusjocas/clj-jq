@@ -8,7 +8,7 @@ lint:
 
 .PHONY: check-deps
 check-deps:
-	clojure -Sdeps '{:deps {antq/antq {:mvn/version "RELEASE"}}}' -M -m antq.core
+	clojure -Sdeps '{:deps {com.github.liquidz/antq {:mvn/version "RELEASE"} org.slf4j/slf4j-nop {:mvn/version "RELEASE"}}}' -M -m antq.core
 
 .PHONY: uberjar
 uberjar:
