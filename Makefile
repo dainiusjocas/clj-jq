@@ -4,7 +4,7 @@ test:
 
 .PHONY: lint
 lint:
-	clojure -M:clj-kondo
+	clojure -M:clj-kondo --lint build cli src test
 
 .PHONY: check-deps
 check-deps:
