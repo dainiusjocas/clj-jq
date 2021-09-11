@@ -69,3 +69,11 @@
                :target-dir class-dir})
   (b/jar {:class-dir class-dir
           :jar-file  lib-jar-file}))
+
+(defn install [_]
+  (jar [])
+  (b/install {:class-dir class-dir
+              :lib       lib
+              :version   version
+              :jar-file  lib-jar-file
+              :basis     basis}))
