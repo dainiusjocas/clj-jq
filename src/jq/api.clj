@@ -1,0 +1,55 @@
+(ns jq.api
+  (:require [jq.api.api-impl :as impl])
+  (:import (net.thisptr.jackson.jq JsonQuery)))
+
+(set! *warn-on-reflection* true)
+
+; jq docs http://manpages.ubuntu.com/manpages/hirsute/man1/jq.1.html
+(defn execute
+  "Given a JSON data string (1) and a JQ query string (2)
+  returns a JSON string result of (2) applied on (1)."
+  ^String [^String data ^String query]
+  (impl/apply-json-query-on-string-data data (impl/compile-query query)))
+
+(defn processor
+  "Given a JQ query string (1) compiles it and returns a function that given
+  a JSON string (2) will return a JSON string with (1) applied on (2)."
+  [^String query]
+  (let [^JsonQuery json-query (impl/compile-query query)]
+    (fn ^String [^String data]
+      (impl/apply-json-query-on-string-data data json-query))))
+
+(defn flexible-processor
+  "Given a JQ query string (1) compiles it and returns a function that given
+  a JsonNode object or a String (2) will return
+  either a JSON string or json node with (1) applied on (2)."
+  ([^String query] (flexible-processor query {}))
+  ([^String query opts]
+   (let [^JsonQuery query (impl/compile-query query)
+         output-format (get opts :output :string)]
+     (fn [json-data]
+       (cond
+         ; string => string
+         (and (string? json-data) (= :string output-format))
+         (impl/apply-json-query-on-string-data json-data query)
+
+         ; string => json-node
+         (and (string? json-data) (not= :string output-format))
+         (impl/apply-json-query-on-json-node (impl/string->json-node json-data) query)
+
+         ; json-node => string
+         (and (not (string? json-data)) (= :string output-format))
+         (impl/apply-json-query-on-json-node-data json-data query)
+
+         ; json-node => json-node
+         (and (not (string? json-data)) (not= :string output-format))
+         (impl/apply-json-query-on-json-node json-data query))))))
+
+(comment
+  (jq.api/execute "{\"a\":[1,2,3,4,5],\"b\":\"hello\"}" ".")
+
+  ((jq.api/processor ".") "{\"a\":[1,2,3,4,5],\"b\":\"hello\"}")
+
+  ((jq.api/flexible-processor ".") "{\"a\":[1,2,3,4,5],\"b\":\"hello\"}")
+
+  ((jq.api/flexible-processor "." {:output :json-node}) "{\"a\":[1,2,3,4,5],\"b\":\"hello\"}"))

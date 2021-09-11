@@ -67,7 +67,7 @@ jobs:
       - name: Install clojure tools-deps
         uses: DeLaGuardo/setup-clojure@master
         with:
-          tools-deps: 1.10.3.956
+          tools-deps: 1.10.3.967
 
       - name: Compile uberjar
         run: |
@@ -201,7 +201,7 @@ jobs:
       - name: Install clojure tools-deps
         uses: DeLaGuardo/setup-clojure@master
         with:
-          tools-deps: 1.10.3.956
+          tools-deps: 1.10.3.967
 
       - name: Publish lib to Clojars
         run: |

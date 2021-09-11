@@ -3,7 +3,7 @@
   (:require [clojure.java.io :as io]
             [clojure.string :as str]
             [clojure.tools.cli :as cli]
-            [jq.core :as jq])
+            [jq.api :as jq])
   (:import (java.io Reader BufferedReader)))
 
 (def cli-options
@@ -23,7 +23,7 @@
   (println "Supported options:")
   (println summary))
 
-(defn execute [jq-filter files options]
+(defn execute [jq-filter files _]
   (let [jq-processor (jq/processor jq-filter)]
     (if (seq files)
       (doseq [f files]

@@ -4,15 +4,20 @@
 
 # clj-jq
 
-A library to execute `jq` scripts on JSON data. It is a thin wrapper around [jackson-jq](https://github.com/eiiches/jackson-jq).
+A library to execute [`jq`](https://stedolan.github.io/jq/) scripts on JSON data within a Clojure application.
+It is a thin wrapper around [jackson-jq](https://github.com/eiiches/jackson-jq):
+a pure Java `jq` Implementation for Jackson JSON Processor.
 
 Available `jq` functions can be found [here](https://github.com/eiiches/jackson-jq#implementation-status-and-current-limitations).
+
+This library is compatible with the GraalVM `native-image`.
 
 ## Alternatives
 
 There is another `jq` library for Clojure: [clj-jq](https://github.com/BrianMWest/clj-jq). 
-This library works by shelling-out to an embedded `jq`. The problem is that it has costs for
-every invocation. Also, it creates difficulties to use this library with the GraalVM native-image.
+This library works by shelling-out to an embedded `jq` instance.
+The problem with this approach is that it has fixed costs for every invocation. 
+Also, it creates difficulties to use this library with the GraalVM native-image.
 
 ## Use cases
 
@@ -21,7 +26,7 @@ The library intends to be used for stream processing.
 ### Compiling a script to execute it multiple times
 
 ```clojure
-(require '[jq.core :as jq])
+(require '[jq.api :as jq])
 
 (let [data "[1,2,3]"
       query "map(.+1)"
@@ -37,7 +42,7 @@ Or inline:
 => "[2,3,4]"
 ```
 
-### One of script execution
+### One-off script execution
 
 ```clojure
 (let [data "[1,2,3]"
@@ -46,20 +51,34 @@ Or inline:
 => "[2,3,4]"
 ```
 
+## How to join multiple scripts together
+
+Joining `jq` scripts is as simple as "piping" output of one script to another:
+join `jq` script strings with `|` character.
+
+```clojure
+(let [data "[1,2,3]"
+      script-inc "map(.+1)"
+      script-reverse "reverse"
+      query (clojure.string/join " | " [script-inc script-reverse])]
+  (jq/execute data query))
+=> "[4,3,2]"
+```
+
 ## Performance
 
 ```clojure
 (use 'criterium.core)
-(let [jq-script (time (jq.core/processor ".a[] |= sqrt"))] 
+(let [jq-script (time (jq/processor ".a[] |= sqrt"))]
   (quick-bench (jq-script "{\"a\":[10,2,3,4,5],\"b\":\"hello\"}")))
 =>
-"Elapsed time: 0.098731 msecs"
-Evaluation count : 203586 in 6 samples of 33931 calls.
-Execution time mean : 3.729388 µs
-Execution time std-deviation : 490.874949 ns
-Execution time lower quantile : 2.960691 µs ( 2.5%)
-Execution time upper quantile : 4.082989 µs (97.5%)
-Overhead used : 1.977144 ns
+"Elapsed time: 0.063264 msecs"
+Evaluation count : 198870 in 6 samples of 33145 calls.
+Execution time mean : 3.687955 µs
+Execution time std-deviation : 668.209042 ns
+Execution time lower quantile : 3.041275 µs ( 2.5%)
+Execution time upper quantile : 4.280444 µs (97.5%)
+Overhead used : 1.766661 ns
 ```
 
 ## Future work
