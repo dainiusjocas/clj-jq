@@ -26,4 +26,5 @@ native-image: uberjar
 
 .PHONY: static-native-image
 static-native-image: uberjar
-	CLJ_JQ_STATIC=true ./script/compile
+	./script/setup-musl
+	PATH=$$HOME/.musl/bin:$$PATH CLJ_JQ_STATIC=true CLJ_JQ_MUSL=true ./script/compile
