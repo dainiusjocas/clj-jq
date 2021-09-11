@@ -4,10 +4,13 @@
 
 # clj-jq
 
-A library to execute `jq` scripts on JSON data.
-It is a thin wrapper around [jackson-jq](https://github.com/eiiches/jackson-jq).
+A library to execute [`jq`](https://stedolan.github.io/jq/) scripts on JSON data within a Clojure application.
+It is a thin wrapper around [jackson-jq](https://github.com/eiiches/jackson-jq):
+a pure Java `jq` Implementation for Jackson JSON Processor.
 
 Available `jq` functions can be found [here](https://github.com/eiiches/jackson-jq#implementation-status-and-current-limitations).
+
+This library is compatible with the GraalVM `native-image`.
 
 ## Alternatives
 
