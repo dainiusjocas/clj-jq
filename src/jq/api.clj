@@ -1,7 +1,6 @@
 (ns jq.api
   (:require [jq.api.api-impl :as impl])
-  (:import (net.thisptr.jackson.jq JsonQuery)
-           (com.fasterxml.jackson.databind ObjectMapper)))
+  (:import (net.thisptr.jackson.jq JsonQuery)))
 
 (set! *warn-on-reflection* true)
 
@@ -46,7 +45,6 @@
          (and (not (string? json-data)) (not= :string output-format))
          (impl/apply-json-query-on-json-node json-data query))))))
 
-; TODO: convert those to test cases
 (comment
   (jq.api/execute "{\"a\":[1,2,3,4,5],\"b\":\"hello\"}" ".")
 
@@ -54,11 +52,4 @@
 
   ((jq.api/flexible-processor ".") "{\"a\":[1,2,3,4,5],\"b\":\"hello\"}")
 
-  ((jq.api/flexible-processor "." {:output :json-node}) "{\"a\":[1,2,3,4,5],\"b\":\"hello\"}")
-
-  ((jq.api/flexible-processor ".") (.readTree (ObjectMapper.)
-                                              "{\"a\":[1,2,3,4,5],\"b\":\"hello\"}"))
-
-  ((jq.api/flexible-processor "." {:output :json-node})
-   (.readTree (ObjectMapper.)
-              "{\"a\":[1,2,3,4,5],\"b\":\"hello\"}")))
+  ((jq.api/flexible-processor "." {:output :json-node}) "{\"a\":[1,2,3,4,5],\"b\":\"hello\"}"))
