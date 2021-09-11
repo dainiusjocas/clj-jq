@@ -1,4 +1,6 @@
-(ns jq.core
+(ns ^{:doc "This namespace is deprecated in favor of jq.api"
+      :deprecated "1.1.0"}
+  jq.core
   (:import (net.thisptr.jackson.jq JsonQuery Scope Versions Output BuiltinFunctionLoader)
            (com.fasterxml.jackson.databind ObjectMapper JsonNode)))
 
