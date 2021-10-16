@@ -4,6 +4,11 @@ For a list of breaking changes, check [here](#breaking-changes).
 
 ## Unreleased
 
+## v1.1.1
+
+- Bumped dependencies
+- GraalVM native image build future-proof
+
 ## v1.1.0
 
 ## New
