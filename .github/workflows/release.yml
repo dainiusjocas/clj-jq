@@ -142,7 +142,7 @@ jobs:
       - name: Compile uberjar on windows
         if: ${{ matrix.os == 'windows-latest' }}
         run: |
-          clojure -T:build uber
+          clojure -T:windows-build uber
         shell: powershell
 
       - uses: ilammy/msvc-dev-cmd@v1.10.0
