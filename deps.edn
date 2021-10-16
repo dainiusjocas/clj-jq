@@ -24,13 +24,14 @@
   {:extra-paths ["cli" "classes" "resources"]
    :extra-deps  {org.clojure/tools.cli {:mvn/version "1.0.206"}}}
   :build
-  {:deps {io.github.clojure/tools.build {:git/tag "v0.6.2" :git/sha "226fb52"}}
+  {:deps        {io.github.clojure/tools.build        {:git/tag "v0.6.2" :git/sha "226fb52"}
+                 com.github.clj-easy/graal-build-time {:mvn/version "0.1.4"}}
    :extra-paths ["build"]
-   :ns-default build
-   :jvm-opts   ["-Dclojure.compiler.direct-linking=true"]}
+   :ns-default  build
+   :jvm-opts    ["-Dclojure.compiler.direct-linking=true"]}
   :deploy
   {:replace-deps {slipset/deps-deploy {:mvn/version "0.2.0"}}
-   :exec-fn deps-deploy.deps-deploy/deploy
-   :exec-args {:installer :remote
-               :pom-file "target/classes/META-INF/maven/lt.jocas/clj-jq/pom.xml"
-               :artifact "target/clj-jq.jar"}}}}
+   :exec-fn      deps-deploy.deps-deploy/deploy
+   :exec-args    {:installer :remote
+                  :pom-file  "target/classes/META-INF/maven/lt.jocas/clj-jq/pom.xml"
+                  :artifact  "target/clj-jq.jar"}}}}
