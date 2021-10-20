@@ -18,18 +18,12 @@
    :main-opts   ["-m" "cognitect.test-runner"]}
   :clj-kondo
   {:main-opts  ["-m" "clj-kondo.main" "--lint" "src" "test"]
-   :extra-deps {clj-kondo/clj-kondo {:mvn/version "2021.09.25"}}
+   :extra-deps {clj-kondo/clj-kondo {:mvn/version "2021.10.19"}}
    :jvm-opts   ["-Dclojure.main.report=stderr"]}
   :cli
   {:extra-paths ["cli" "classes" "resources"]
    :extra-deps  {org.clojure/tools.cli {:mvn/version "1.0.206"}}}
   :build
-  {:deps        {io.github.clojure/tools.build        {:git/tag "v0.6.2" :git/sha "226fb52"}
-                 com.github.clj-easy/graal-build-time {:mvn/version "0.1.4"}}
-   :extra-paths ["build"]
-   :ns-default  build
-   :jvm-opts    ["-Dclojure.compiler.direct-linking=true"]}
-  :windows-build
   {:deps        {io.github.clojure/tools.build {:git/tag "v0.6.2" :git/sha "226fb52"}}
    :extra-paths ["build"]
    :ns-default  build
