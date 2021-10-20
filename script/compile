@@ -15,6 +15,7 @@ CLJ_JQ_VERSION=$(cat resources/CLJ_JQ_VERSION)
 args=( "-jar" "target/clj-jq-$CLJ_JQ_VERSION-standalone.jar"
        "-H:Name=clj-jq"
        "-H:+ReportExceptionStackTraces"
+       "--initialize-at-build-time"
        "-H:Log=registerResource:"
        "--verbose"
        "--no-fallback"
