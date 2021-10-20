@@ -4,6 +4,10 @@ For a list of breaking changes, check [here](#breaking-changes).
 
 ## Unreleased
 
+## v1.1.3
+
+- Bumped GraalVM to 21.3.0
+
 ## v1.1.1
 
 - Bumped dependencies
