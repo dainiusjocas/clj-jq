@@ -4,6 +4,8 @@ For a list of breaking changes, check [here](#breaking-changes).
 
 ## Unreleased
 
+- Fixed a bug for musl based release #24
+
 ## v1.1.3
 
 - Bumped GraalVM to 21.3.0
