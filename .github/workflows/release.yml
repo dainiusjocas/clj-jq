@@ -67,7 +67,7 @@ jobs:
       - name: Install clojure tools-deps
         uses: DeLaGuardo/setup-clojure@master
         with:
-          tools-deps: 1.10.3.986
+          tools-deps: 1.10.3.1013
 
       - name: Compile uberjar
         run: |
@@ -95,7 +95,7 @@ jobs:
           bash script/setup-musl
           echo "MUSL_DIR=${HOME}/.musl" >> $GITHUB_ENV
           echo "PATH=$PATH:${MUSL_DIR}/bin" >> $GITHUB_ENV
-          CLJ_JQ_STATIC=true LMGREP_MUSL=true bash script/compile
+          PATH=$PATH:${MUSL_DIR}/bin CLJ_JQ_STATIC=true CLJ_JQ_MUSL=true bash script/compile
           zip clj-jq-${RELEASE_VERSION#v*}-${{ matrix.platform }}-${{ matrix.arch }}-static.zip clj-jq
 
       - name: Upload binaries to the release
@@ -136,8 +136,8 @@ jobs:
       - name: Install clojure tools-deps
         uses: DeLaGuardo/setup-clojure@master
         with:
-          tools-deps: 1.10.3.986
-          cli: 1.10.3.986
+          tools-deps: 1.10.3.1013
+          cli: 1.10.3.1013
 
       - name: Compile uberjar on windows
         if: ${{ matrix.os == 'windows-latest' }}
@@ -195,15 +195,15 @@ jobs:
             ${{ runner.os }}-maven-
 
       - name: Prepare java
-        uses: actions/setup-java@v2.3.1
+        uses: actions/setup-java@v2
         with:
-          java-version: 8.0.292+10
-          distribution: 'adopt'
+          distribution: 'zulu'
+          java-version: '11'
 
       - name: Install clojure tools-deps
         uses: DeLaGuardo/setup-clojure@master
         with:
-          tools-deps: 1.10.3.986
+          tools-deps: 1.10.3.1013
 
       - name: Publish lib to Clojars
         run: |
