@@ -99,7 +99,9 @@ jobs:
       - name: Compile static native-image with MUSL on linux
         if: ${{ matrix.platform == 'linux' }}
         run: |
-          CLJ_JQ_STATIC=true CLJ_JQ_MUSL=true bash script/compile
+          ls $MUSL_DIR
+          ls $MUSL_DIR/bin
+          PATH=$PATH:${MUSL_DIR}/bin CLJ_JQ_STATIC=true CLJ_JQ_MUSL=true bash script/compile
           zip clj-jq-${RELEASE_VERSION#v*}-${{ matrix.platform }}-${{ matrix.arch }}-static.zip clj-jq
 
       - name: Upload binaries to the release
