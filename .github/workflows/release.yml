@@ -54,9 +54,9 @@ jobs:
         uses: DeLaGuardo/setup-graalvm@master
         with:
           # GraalVM version, no pattern syntax available atm
-          graalvm: '21.3.0'
+          graalvm: '22.2.0'
           # Java version, optional, defaults to 'java8'. Available options are 'java8' and 'java11'.
-          java: 'java11'
+          java: 'java17'
           # Architecture flag, optional, defaults to 'amd64'. Available options are 'amd64' and 'aarch64'. Later is available only for linux runners.
           arch: ${{ matrix.arch }}
 
@@ -67,7 +67,7 @@ jobs:
       - name: Install clojure tools-deps
         uses: DeLaGuardo/setup-clojure@master
         with:
-          tools-deps: 1.10.3.1013
+          tools-deps: 1.11.1.1155
 
       - name: Compile uberjar
         run: |
@@ -132,16 +132,15 @@ jobs:
           echo ("RELEASE_VERSION=" + $env:GITHUB_REF.replace('refs/tags/', '')) >> $env:GITHUB_ENV
 
       - name: Prepare java
-        uses: actions/setup-java@v2
+        uses: actions/setup-java@v3.4.1
         with:
           distribution: 'zulu'
-          java-version: '11'
+          java-version: '17'
 
       - name: Install clojure tools-deps
         uses: DeLaGuardo/setup-clojure@master
         with:
-          tools-deps: 1.10.3.1013
-          cli: 1.10.3.1013
+          cli: 1.11.1.1155
 
       - name: Compile uberjar on windows
         if: ${{ matrix.os == 'windows-latest' }}
@@ -188,10 +187,10 @@ jobs:
     needs: [create-gh-release, compile-windows-native-image, compile-native-image-and-release-artifacts]
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3.0.2
 
       - name: Cache maven deps
-        uses: actions/cache@v2
+        uses: actions/cache@v3.0.7
         with:
           path: ~/.m2/repository
           key: ${{ runner.os }}-maven-${{ hashFiles('**/deps.edn') }}
@@ -199,7 +198,7 @@ jobs:
             ${{ runner.os }}-maven-
 
       - name: Prepare java
-        uses: actions/setup-java@v2
+        uses: actions/setup-java@v3.4.1
         with:
           distribution: 'zulu'
           java-version: '11'
@@ -207,7 +206,7 @@ jobs:
       - name: Install clojure tools-deps
         uses: DeLaGuardo/setup-clojure@master
         with:
-          tools-deps: 1.10.3.1013
+          tools-deps: 1.11.1.1155
 
       - name: Publish lib to Clojars
         run: |

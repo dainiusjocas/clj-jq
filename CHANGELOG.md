@@ -5,6 +5,8 @@ For a list of breaking changes, check [here](#breaking-changes).
 ## Unreleased
 
 - Fixed a bug for musl based release #24
+- Updated `net.thisptr/jackson-jq` to `1.0.0-preview.20220705`
+- Updated GraalVM to 22.2.0
 
 ## v1.1.3
 
