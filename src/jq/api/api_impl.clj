@@ -44,12 +44,12 @@
 (defn json-node->string ^String [^JsonNode data]
   (.writeValueAsString mapper data))
 
-(defn ^String apply-json-query-on-string-data
+(defn apply-json-query-on-string-data
   "Reads data JSON string into a JsonNode and passes to the query executor."
-  [^String data ^JsonQuery query]
+  ^String [^String data ^JsonQuery query]
   (json-node->string (apply-json-query-on-json-node (string->json-node data) query)))
 
-(defn ^String apply-json-query-on-json-node-data
+(defn apply-json-query-on-json-node-data
   "Reads data JSON string into a JsonNode and passes to the query executor."
   ^String [^JsonNode data ^JsonQuery query]
   (json-node->string (apply-json-query-on-json-node data query)))

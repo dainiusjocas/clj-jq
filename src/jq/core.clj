@@ -31,9 +31,9 @@
   IGetter
   (getValue [_] container))
 
-(defn ^JsonQuery compile-query
+(defn compile-query
   "Compiles a JQ query string into a JsonQuery object."
-  [^String query]
+  ^JsonQuery [^String query]
   (JsonQuery/compile query jq-version))
 
 (defn query-json-node
@@ -44,9 +44,9 @@
     (.apply query (Scope/newChildScope root-scope) data output-container)
     (.writeValueAsString mapper ^JsonNode (.getValue output-container))))
 
-(defn ^String query-data
+(defn query-data
   "Reads data JSON string into a JsonNode and passes to the query executor."
-  [^String data ^JsonQuery query]
+  ^String [^String data ^JsonQuery query]
   (query-json-node (.readTree mapper data) query))
 
 ; jq docs http://manpages.ubuntu.com/manpages/hirsute/man1/jq.1.html
