@@ -4,10 +4,10 @@ For a list of breaking changes, check [here](#breaking-changes).
 
 ## Unreleased
 
-- Support for loading JQ [modules](https://stedolan.github.io/jq/manual/#Modules)
+- Support for loading JQ [modules](https://stedolan.github.io/jq/manual/#Modules) from the filesystem
 - Fixed a bug for musl based release #24
 - Updated `net.thisptr/jackson-jq` to `1.0.0-preview.20220705`
-- Updated GraalVM to 22.2.0
+- Updated GraalVM to 22.3.0
 
 ## v1.1.3
 
