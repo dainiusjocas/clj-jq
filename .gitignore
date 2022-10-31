@@ -20,3 +20,4 @@ clj-jq.build_artifacts.txt
 release.properties
 pom.xml.releaseBackup
 *.bgv
+.clj-kondo/
