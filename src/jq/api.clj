@@ -31,11 +31,7 @@
   ([^String query opts]
    (let [^JsonQuery query (impl/compile-query query)
          output-format (get opts :output :string)
-         module-paths (get opts :modules)
-         module-paths (if (string? module-paths) [module-paths] module-paths)
-         ^Scope scope (impl/new-scope)]
-     (when (seq module-paths)
-       (impl/setup-modules! scope module-paths))
+         ^Scope scope (impl/new-scope opts)]
      (fn [json-data]
        (cond
          ; string => string

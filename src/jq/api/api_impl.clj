@@ -46,8 +46,15 @@
     (.loadFunctions (BuiltinFunctionLoader/getInstance) jq-version scope)
     scope))
 
-(defn new-scope ^Scope []
-  (Scope/newChildScope root-scope))
+(defn new-scope
+  (^Scope [] (Scope/newChildScope root-scope))
+  (^Scope [opts]
+   (let [^Scope scope (new-scope)
+         module-paths (get opts :modules)
+         module-paths (if (string? module-paths) [module-paths] module-paths)]
+     (when (seq module-paths)
+       (setup-modules! scope module-paths))
+     scope)))
 
 ; Helper interface that specifies a method to get a string value.
 (definterface IGetter
