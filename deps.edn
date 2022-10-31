@@ -2,11 +2,11 @@
  ["src"]
  :deps
  {net.thisptr/jackson-jq                      {:mvn/version "1.0.0-preview.20220705"}
-  com.fasterxml.jackson.core/jackson-databind {:mvn/version "2.13.3"}}
+  com.fasterxml.jackson.core/jackson-databind {:mvn/version "2.13.4.2"}}
  :aliases
  {:dev
   {:extra-paths ["dev" "classes" "test" "test/resources"]
-   :extra-deps  {org.clojure/tools.deps.alpha {:mvn/version "0.14.1222"
+   :extra-deps  {org.clojure/tools.deps.alpha {:mvn/version "0.15.1244"
                                                :exclusions  [org.slf4j/slf4j-log4j12
                                                              org.slf4j/slf4j-api
                                                              org.slf4j/slf4j-nop]}
@@ -14,15 +14,15 @@
   :test
   {:extra-paths ["test" "test/resources"]
    :extra-deps  {com.cognitect/test-runner {:git/url "https://github.com/cognitect-labs/test-runner.git"
-                                            :sha     "a85b3b02765fb68684ab9ee4a8598eacf7e471d2"}}
+                                            :sha     "7284cda41fb9edc0f3bc6b6185cfb7138fc8a023"}}
    :main-opts   ["-m" "cognitect.test-runner"]}
   :clj-kondo
   {:main-opts  ["-m" "clj-kondo.main" "--lint" "src" "test"]
-   :extra-deps {clj-kondo/clj-kondo {:mvn/version "2022.08.03"}}
+   :extra-deps {clj-kondo/clj-kondo {:mvn/version "2022.10.14"}}
    :jvm-opts   ["-Dclojure.main.report=stderr"]}
   :cli
   {:extra-paths ["cli" "classes" "resources"]
-   :extra-deps  {org.clojure/tools.cli {:mvn/version "1.0.206"}}}
+   :extra-deps  {org.clojure/tools.cli {:mvn/version "1.0.214"}}}
   :build
   {:deps        {io.github.clojure/tools.build {:git/tag "v0.8.3" :git/sha "0d20256"}}
    :extra-paths ["build"]

@@ -21,7 +21,7 @@ Also, it creates difficulties to use this library with the GraalVM native-image.
 
 ## Use cases
 
-The library intends to be used for stream processing.
+The library is intended to be used for stream processing.
 
 ### Compiling a script to execute it multiple times
 
@@ -35,7 +35,25 @@ The library intends to be used for stream processing.
 => "[2,3,4]"
 ```
 
-Or inline:
+### Loading JQ modules from the filesystem
+
+File with contents:
+```shell
+cat /path/to/script.jq
+=> def increment(number): number + 1;
+```
+
+```clojure
+(let [data "[1,2,3]"
+      query "include \"scripts\"; map(increment(.))"
+      processor-fn (jq/processor query {:modules ["/path/to"]})]
+  (processor-fn data))
+=> "[2,3,4]"
+```
+
+Multiple modules can be provided.
+
+Inlined example:
 
 ```clojure
 ((jq/processor "map(.+1)") "[1,2,3]")
