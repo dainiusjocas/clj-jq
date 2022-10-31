@@ -83,10 +83,10 @@ Overhead used : 1.766661 ns
 
 ## Future work
 
-- [ ] Expose interface to provide custom function
+- [ ] Expose interface to provide custom function, like [here](https://github.com/quarkiverse/quarkus-jackson-jq)
 
 ## License
 
-Copyright &copy; 2021 [Dainius Jocas](https://www.jocas.lt).
+Copyright &copy; 2022 [Dainius Jocas](https://www.jocas.lt).
 
 Distributed under The Apache License, Version 2.0.

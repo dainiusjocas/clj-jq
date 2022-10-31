@@ -1,6 +1,6 @@
 (ns jq.api
   (:require [jq.api.api-impl :as impl])
-  (:import (net.thisptr.jackson.jq JsonQuery)))
+  (:import (net.thisptr.jackson.jq JsonQuery Scope)))
 
 (set! *warn-on-reflection* true)
 
@@ -9,15 +9,19 @@
   "Given a JSON data string (1) and a JQ query string (2)
   returns a JSON string result of (2) applied on (1)."
   ^String [^String data ^String query]
-  (impl/apply-json-query-on-string-data data (impl/compile-query query)))
+  (impl/apply-json-query-on-string-data
+    data
+    (impl/compile-query query)
+    (impl/new-scope)))
 
 (defn processor
   "Given a JQ query string (1) compiles it and returns a function that given
   a JSON string (2) will return a JSON string with (1) applied on (2)."
   [^String query]
-  (let [^JsonQuery json-query (impl/compile-query query)]
+  (let [^JsonQuery json-query (impl/compile-query query)
+        ^Scope scope (impl/new-scope)]
     (fn ^String [^String data]
-      (impl/apply-json-query-on-string-data data json-query))))
+      (impl/apply-json-query-on-string-data data json-query scope))))
 
 (defn flexible-processor
   "Given a JQ query string (1) compiles it and returns a function that given
@@ -26,30 +30,35 @@
   ([^String query] (flexible-processor query {}))
   ([^String query opts]
    (let [^JsonQuery query (impl/compile-query query)
-         output-format (get opts :output :string)]
+         output-format (get opts :output :string)
+         module-paths (get opts :modules)
+         module-paths (if (string? module-paths) [module-paths] module-paths)
+         ^Scope scope (impl/new-scope)]
+     (when (seq module-paths)
+       (impl/setup-modules! scope module-paths))
      (fn [json-data]
        (cond
          ; string => string
          (and (string? json-data) (= :string output-format))
-         (impl/apply-json-query-on-string-data json-data query)
+         (impl/apply-json-query-on-string-data json-data query scope)
 
          ; string => json-node
          (and (string? json-data) (not= :string output-format))
-         (impl/apply-json-query-on-json-node (impl/string->json-node json-data) query)
+         (impl/apply-json-query-on-json-node (impl/string->json-node json-data) query scope)
 
          ; json-node => string
          (and (not (string? json-data)) (= :string output-format))
-         (impl/apply-json-query-on-json-node-data json-data query)
+         (impl/apply-json-query-on-json-node-data json-data query scope)
 
          ; json-node => json-node
          (and (not (string? json-data)) (not= :string output-format))
-         (impl/apply-json-query-on-json-node json-data query))))))
+         (impl/apply-json-query-on-json-node json-data query scope))))))
 
 (comment
   (jq.api/execute "{\"a\":[1,2,3,4,5],\"b\":\"hello\"}" ".")
 
   ((jq.api/processor ".") "{\"a\":[1,2,3,4,5],\"b\":\"hello\"}")
 
-  ((jq.api/flexible-processor ".") "{\"a\":[1,2,3,4,5],\"b\":\"hello\"}")
+  ((jq.api/flexible-processor "." {:module-paths ["test/resources"]}) "{\"a\":[1,2,3,4,5],\"b\":\"hello\"}")
 
   ((jq.api/flexible-processor "." {:output :json-node}) "{\"a\":[1,2,3,4,5],\"b\":\"hello\"}"))

@@ -9,6 +9,27 @@
 (def query "map(.+1)")
 (def result-string "[2,3,4]")
 
+(deftest script-from-a-file
+  (let [modules-dir "test/resources"
+        script-file (str modules-dir "/scripts.jq")]
+    (testing "Inlined script with a slurped file"
+      (let [script (str (slurp script-file) "map(increment(.))")
+            processor-fn (jq/flexible-processor script {:output :string})
+            resp (processor-fn string-data)]
+        (is (= result-string resp))))
+    (testing "include module"
+      (let [script "include \"scripts\"; map(increment(.))"
+            processor-fn (jq/flexible-processor script {:output  :string
+                                                        :modules modules-dir})
+            resp (processor-fn string-data)]
+        (is (= result-string resp))))
+    (testing "import module"
+      (let [script "import \"scripts\" as scripts; map(scripts::increment(.))"
+            processor-fn (jq/flexible-processor script {:output :string
+                                                        :modules [modules-dir]})
+            resp (processor-fn string-data)]
+        (is (= result-string resp))))))
+
 (deftest simple-execution
   (let [resp (jq.api/execute string-data query)]
     (is (string? resp))
