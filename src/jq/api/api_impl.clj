@@ -39,8 +39,10 @@
   [^Scope scope file-paths]
   (.setModuleLoader scope (module-loader scope file-paths)))
 
-(def ^Scope root-scope
-  "Scope that contains all the available Builtin functions."
+(def ^:private ^Scope root-scope
+  "Scope that contains all the available Builtin functions.
+  Handy for the native image creation, because at build time it loads all the functions.
+  WARNING: MUTABLE! USE ONLY TO CREATE NEW SCOPES!"
   (let [scope (Scope/newEmptyScope)]
     ; Load all the functions available for the JQ-1.6
     (.loadFunctions (BuiltinFunctionLoader/getInstance) jq-version scope)

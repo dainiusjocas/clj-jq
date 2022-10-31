@@ -31,13 +31,24 @@
         (is (= result-string resp))))))
 
 (deftest simple-execution
-  (let [resp (jq.api/execute string-data query)]
+  (let [resp (jq/execute string-data query)]
     (is (string? resp))
-    (is (= result-string resp))))
+    (is (= result-string resp)))
+  (testing "loading scripts from file"
+    (let [opts {:modules "test/resources"}
+          query "include \"scripts\"; map(increment(.))"
+          resp (jq/execute string-data query opts)]
+      (is (string? resp))
+      (is (= result-string resp)))))
 
 (deftest string-to-string-execution
   (testing "mapping function onto values"
     (let [processor-fn (jq/processor query)]
+      (is (= result-string (processor-fn string-data)))))
+  (testing "loading scripts from file"
+    (let [opts {:modules "test/resources"}
+          query "include \"scripts\"; map(increment(.))"
+          processor-fn (jq/processor query opts)]
       (is (= result-string (processor-fn string-data))))))
 
 (deftest flexible-processor-options
