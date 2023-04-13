@@ -3,7 +3,8 @@
   (:require [clojure.java.io :as io]
             [clojure.string :as str]
             [clojure.tools.cli :as cli]
-            [jq.api :as jq])
+            [jq.api :as jq]
+            [jq.api.api-impl :as impl])
   (:import (java.io Reader BufferedReader)))
 
 (def cli-options
@@ -24,13 +25,15 @@
   (println summary))
 
 (defn execute [jq-filter files _]
-  (let [jq-processor (jq/processor jq-filter)]
+  (let [jq-processor (jq/flexible-processor jq-filter {:multi true, :output :json-node})]
     (if (seq files)
-      (doseq [f files]
-        (println (jq-processor (slurp f))))
+      (doseq [f files
+              item (jq-processor (slurp f))]
+        (println (impl/json-node->string item)))
       (when (.ready ^Reader *in*)
-        (doseq [line (line-seq (BufferedReader. *in*))]
-          (println (jq-processor line)))))))
+        (doseq [line (line-seq (BufferedReader. *in*))
+                item (jq-processor line)]
+          (println (impl/json-node->string item)))))))
 
 (defn -main [& args]
   (let [{:keys               [options arguments errors summary]

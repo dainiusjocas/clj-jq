@@ -41,6 +41,22 @@
       (is (string? resp))
       (is (= result-string resp)))))
 
+(deftest multi-output-execution
+  (testing "running a processor in multi-output mode, simple case"
+    (let [data-1 "[1,2,3]"
+          data-2 "[4,5,6]" ;; testing two calls ensures we aren't retaining extra state
+          script ".[] | {\"out\": .}"
+          processor-fn (jq/flexible-processor script {:output :string
+                                                      :multi true})]
+      (is (= "[{\"out\":1},{\"out\":2},{\"out\":3}]" (processor-fn data-1)))
+      (is (= "[{\"out\":4},{\"out\":5},{\"out\":6}]" (processor-fn data-2)))))
+  (testing "checking that queries can choose not to return any output given an input"
+    (let [data "[9,10,11]"
+          script ".[] | select(. >= 10)"
+          processor-fn (jq/flexible-processor script {:output :string
+                                                      :multi true})]
+      (is (= "[10,11]" (processor-fn data))))))
+
 (deftest string-to-string-execution
   (testing "mapping function onto values"
     (let [processor-fn (jq/processor query)]
