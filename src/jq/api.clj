@@ -4,6 +4,9 @@
 
 (set! *warn-on-reflection* true)
 
+; required in common use cases, so moving out of impl space
+(def json-node->string impl/json-node->string)
+
 ; jq docs http://manpages.ubuntu.com/manpages/hirsute/man1/jq.1.html
 (defn execute
   "Given a JSON data string (1) and a JQ query string (2)
