@@ -18,7 +18,7 @@
       (format "%s-%s" tag "SNAPSHOT"))))
 
 (def lib 'lt.jocas/clj-jq)
-(def version (current-version))
+(def version (or (System/getenv "version") (current-version)))
 (def class-dir "target/classes")
 (def basis (b/create-basis {:project "deps.edn"
                             :aliases [:cli]}))

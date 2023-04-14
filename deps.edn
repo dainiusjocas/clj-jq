@@ -26,7 +26,7 @@
   {:deps        {io.github.clojure/tools.build {:git/tag "v0.8.3" :git/sha "0d20256"}}
    :extra-paths ["build"]
    :ns-default  build
-   :jvm-opts    ["-Dclojure.compiler.direct-linking=true"]}
+   :jvm-opts    ["-Dclojure.main.report=stderr" "-Dclojure.compiler.direct-linking=true"]}
   :deploy
   {:replace-deps {slipset/deps-deploy {:mvn/version "0.2.0"}}
    :exec-fn      deps-deploy.deps-deploy/deploy

@@ -5,6 +5,7 @@
   <groupId>lt.jocas</groupId>
   <artifactId>clj-jq</artifactId>
   <name>clj-jq</name>
+  <version>1.2.1-SNAPSHOT</version>
   <description>jq processor for JSON data</description>
   <url>https://github.com/dainiusjocas/clj-jq</url>
   <licenses>
