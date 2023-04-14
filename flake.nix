@@ -13,6 +13,7 @@
   in {
     legacyPackages = pkgs;
     packages = rec {
+      default = jq-cli;
       jq-cli = let
         buildInitClasses = [
           "com.fasterxml.jackson"
