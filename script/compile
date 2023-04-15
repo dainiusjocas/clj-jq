@@ -1,19 +1,15 @@
 #!/usr/bin/env bash
+: "${lib:=clj-jq}"
 
-if [ -z "$GRAALVM_HOME" ]; then
-    echo "Please set GRAALVM_HOME"
-    exit 1
-fi
+export JAVA_HOME=${GRAALVM_HOME?Please set GRAALVM_HOME}
+export PATH=$GRAALVM_HOME/bin:$PATH
 
 "$GRAALVM_HOME/bin/gu" install native-image || true
 
-export JAVA_HOME=$GRAALVM_HOME
-export PATH=$GRAALVM_HOME/bin:$PATH
+CLJ_JQ_VERSION=$(<resources/CLJ_JQ_VERSION)
 
-CLJ_JQ_VERSION=$(cat resources/CLJ_JQ_VERSION)
-
-args=( "-jar" "target/clj-jq-$CLJ_JQ_VERSION-standalone.jar"
-       "-H:Name=clj-jq"
+args=( "-jar" "target/$lib-$CLJ_JQ_VERSION-standalone.jar"
+       "-H:Name=$lib"
        "-H:+ReportExceptionStackTraces"
        "--initialize-at-build-time"
        "-H:Log=registerResource:"
@@ -28,4 +24,4 @@ if [ "$CLJ_JQ_STATIC" = "true" ]; then
     fi
 fi
 
-"$GRAALVM_HOME/bin/native-image" "${args[@]}"
+exec "$GRAALVM_HOME/bin/native-image" "${args[@]}" "$@"
