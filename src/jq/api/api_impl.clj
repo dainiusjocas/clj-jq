@@ -1,7 +1,8 @@
 (ns ^{:doc    "Internal implementation details."
       :no-doc true}
   jq.api.api-impl
-  (:import (net.thisptr.jackson.jq JsonQuery Versions Scope BuiltinFunctionLoader Output)
+  (:import (java.util ArrayList)
+           (net.thisptr.jackson.jq JsonQuery Versions Scope BuiltinFunctionLoader Output)
            (com.fasterxml.jackson.databind ObjectMapper JsonNode)
            (com.fasterxml.jackson.databind.node JsonNodeFactory)
            (net.thisptr.jackson.jq.module.loaders ChainedModuleLoader BuiltinModuleLoader FileSystemModuleLoader)
@@ -73,20 +74,20 @@
   IContainer
   (getValue [_] container))
 
-(deftype MultiOutputContainer [seq-atom]
+(deftype MultiOutputContainer [^ArrayList container]
   Output
   (emit [_ json-node]
-    (swap! seq-atom conj json-node))
+    (.add container json-node))
   IContainer
   (getValue [_]
-    (let [[contents _] (reset-vals! seq-atom [])
-          jsonArray (.arrayNode JsonNodeFactory/instance (count contents))]
-      (doseq [^JsonNode item contents]
+    (let [jsonArray (.arrayNode JsonNodeFactory/instance (.size container))]
+      (doseq [^JsonNode item container]
         (.add jsonArray item))
+      (.clear container)
       jsonArray)))
 
 (defn NewMultiOutputContainer []
-  (MultiOutputContainer. (atom [])))
+  (MultiOutputContainer. (ArrayList.)))
 
 (defn apply-json-query-on-json-node
   "Given a JSON data string and a JsonQuery object applies the query
