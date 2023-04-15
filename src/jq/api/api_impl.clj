@@ -48,16 +48,6 @@
     (.loadFunctions (BuiltinFunctionLoader/getInstance) jq-version scope)
     scope))
 
-(defn new-scope
-  (^Scope [] (Scope/newChildScope root-scope))
-  (^Scope [opts]
-   (let [^Scope scope (new-scope)
-         module-paths (get opts :modules)
-         module-paths (if (string? module-paths) [module-paths] module-paths)]
-     (when (seq module-paths)
-       (setup-modules! scope module-paths))
-     scope)))
-
 ; Helper interface that specifies a method to get a string value.
 (definterface IGetter
   (^com.fasterxml.jackson.databind.JsonNode getValue []))
@@ -94,6 +84,20 @@
   "Reads data JSON string into a JsonNode and passes to the query executor."
   ^String [^JsonNode data ^JsonQuery query ^Scope scope]
   (json-node->string (apply-json-query-on-json-node data query scope)))
+
+(defn new-scope
+  (^Scope [] (Scope/newChildScope root-scope))
+  (^Scope [opts]
+   (let [^Scope scope (new-scope)
+         module-paths (get opts :modules)
+         module-paths (if (string? module-paths) [module-paths] module-paths)
+         variables (get opts :vars)]
+     (when (seq module-paths)
+       (setup-modules! scope module-paths))
+     (when variables
+       (doseq [[key value] variables]
+        (.setValue scope (name key) (if (string? value) (string->json-node value) value))))
+     scope)))
 
 (defn compile-query
   "Compiles a JQ query string into a JsonQuery object."
