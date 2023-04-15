@@ -17,6 +17,7 @@ uberjar:
 
 .PHONY: deploy-to-clojars
 deploy-to-clojars:
+	mvn -B -DnewVersion="$$(cat resources/CLJ_JQ_VERSION)" -DgenerateBackupPoms=false versions:set
 	clojure -T:build jar
 	clojure -X:deploy
 
