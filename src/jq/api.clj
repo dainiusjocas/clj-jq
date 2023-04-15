@@ -34,9 +34,6 @@
      (fn ^String [^String data]
        (impl/apply-json-query-on-string-data data json-query scope)))))
 
-(defn- container [opts]
-  (when (:multi opts) (impl/NewMultiOutputContainer)))
-
 (defn flexible-processor
   "Given a JQ query string (1) compiles it and returns a function that given
   a JsonNode object or a String (2) will return
@@ -46,8 +43,7 @@
   ([^String query opts]
    (let [^JsonQuery query (impl/compile-query query)
          output-format (get opts :output :string)
-         ^Scope scope (impl/new-scope opts)
-         container (container opts)]
+         ^Scope scope (impl/new-scope opts)]
      (fn [json-data]
        (cond
          ; string => string
@@ -56,15 +52,15 @@
 
          ; string => json-node
          (and (string? json-data) (not= :string output-format))
-         (impl/apply-json-query-on-json-node (impl/string->json-node json-data) query scope container)
+         (impl/apply-json-query-on-json-node (impl/string->json-node json-data) query scope)
 
          ; json-node => string
          (and (not (string? json-data)) (= :string output-format))
-         (impl/apply-json-query-on-json-node-data json-data query scope container)
+         (impl/apply-json-query-on-json-node-data json-data query scope)
 
          ; json-node => json-node
          (and (not (string? json-data)) (not= :string output-format))
-         (impl/apply-json-query-on-json-node json-data query scope container))))))
+         (impl/apply-json-query-on-json-node json-data query scope))))))
 
 (comment
   (jq.api/execute "{\"a\":[1,2,3,4,5],\"b\":\"hello\"}" ".")
