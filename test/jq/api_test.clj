@@ -9,6 +9,16 @@
 (def query "map(.+1)")
 (def result-string "[2,3,4]")
 
+(deftest variables
+  (testing "passing variables in at compile time"
+    (let [script "[$var1, $var2, $var3]"
+          processor-fn (jq/flexible-processor script {:output :string
+                                                      :vars {:var1 "hello"
+                                                             "var2" "world"
+                                                             :var3 123}})
+          resp (processor-fn "null")]
+      (is (= resp "[\"hello\",\"world\",123]")))))
+
 (deftest script-from-a-file
   (let [modules-dir "test/resources"
         script-file (str modules-dir "/scripts.jq")]

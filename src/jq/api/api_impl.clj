@@ -16,6 +16,11 @@
 
 (def jq-version Versions/JQ_1_6)
 
+(defn ->JsonNode ^JsonNode [data]
+  (if (instance? JsonNode data)
+    data
+    (.valueToTree mapper data)))
+
 (defn ->absolute-path
   "FileSystemModuleLoader requires absolute paths."
   ^Path [^String file-path]
@@ -49,16 +54,6 @@
     ; Load all the functions available for the JQ-1.6
     (.loadFunctions (BuiltinFunctionLoader/getInstance) jq-version scope)
     scope))
-
-(defn new-scope
-  (^Scope [] (Scope/newChildScope root-scope))
-  (^Scope [opts]
-   (let [^Scope scope (new-scope)
-         module-paths (get opts :modules)
-         module-paths (if (string? module-paths) [module-paths] module-paths)]
-     (when (seq module-paths)
-       (setup-modules! scope module-paths))
-     scope)))
 
 ; Helper interface that specifies a method to get a string value.
 (definterface IContainer
@@ -114,6 +109,20 @@
   "Reads data JSON string into a JsonNode and passes to the query executor."
   ^String [^JsonNode data ^JsonQuery query ^Scope scope ^IContainer output-container]
   (json-node->string (apply-json-query-on-json-node data query scope output-container)))
+
+(defn new-scope
+  (^Scope [] (Scope/newChildScope root-scope))
+  (^Scope [opts]
+   (let [^Scope scope (new-scope)
+         module-paths (get opts :modules)
+         module-paths (if (string? module-paths) [module-paths] module-paths)
+         variables (get opts :vars)]
+     (when (seq module-paths)
+       (setup-modules! scope module-paths))
+     (when variables
+       (doseq [[key value] variables]
+        (.setValue scope (name key) (->JsonNode value))))
+     scope)))
 
 (defn compile-query
   "Compiles a JQ query string into a JsonQuery object."
