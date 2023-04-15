@@ -7,6 +7,9 @@
 ; required in common use cases, so moving out of impl space
 (def json-node->string impl/json-node->string)
 
+(defn- container [opts]
+  (when (:multi opts) (impl/NewMultiOutputContainer)))
+
 ; jq docs http://manpages.ubuntu.com/manpages/hirsute/man1/jq.1.html
 (defn execute
   "Given a JSON data string (1) and a JQ query string (2)
@@ -20,7 +23,7 @@
      data
      (impl/compile-query query)
      (impl/new-scope opts)
-     (when (:multi opts) (impl/NewMultiOutputContainer)))))
+     (container opts))))
 
 (defn processor
   "Given a JQ query string (1) compiles it and returns a function that given
@@ -31,8 +34,8 @@
    (let [^JsonQuery json-query (impl/compile-query query)
          ^Scope scope (impl/new-scope opts)]
      (fn ^String [^String data]
-       (impl/apply-json-query-on-string-data data json-query scope
-        (when (:multi opts) (impl/NewMultiOutputContainer)))))))
+       (impl/apply-json-query-on-string-data
+         data json-query scope (container opts))))))
 
 (defn flexible-processor
   "Given a JQ query string (1) compiles it and returns a function that given
@@ -44,7 +47,7 @@
    (let [^JsonQuery query (impl/compile-query query)
          output-format (get opts :output :string)
          ^Scope scope (impl/new-scope opts)
-         container (when (:multi opts) (impl/NewMultiOutputContainer))]
+         container (container opts)]
      (fn [json-data]
        (cond
          ; string => string
