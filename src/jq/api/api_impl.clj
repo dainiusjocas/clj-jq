@@ -14,6 +14,11 @@
 
 (def jq-version Versions/JQ_1_6)
 
+(defn ->JsonNode ^JsonNode [data]
+  (if (instance? JsonNode data)
+    data
+    (.valueToTree mapper data)))
+
 (defn ->absolute-path
   "FileSystemModuleLoader requires absolute paths."
   ^Path [^String file-path]
@@ -96,7 +101,7 @@
        (setup-modules! scope module-paths))
      (when variables
        (doseq [[key value] variables]
-        (.setValue scope (name key) (if (string? value) (string->json-node value) value))))
+        (.setValue scope (name key) (->JsonNode value))))
      scope)))
 
 (defn compile-query

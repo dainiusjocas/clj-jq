@@ -2,8 +2,7 @@
   (:require [clojure.test :refer [deftest is testing]]
             [jq.api :as jq]
             [jq.api.api-impl :as utils])
-  (:import (com.fasterxml.jackson.databind JsonNode)
-           (com.fasterxml.jackson.databind.node JsonNodeFactory)))
+  (:import (com.fasterxml.jackson.databind JsonNode)))
 
 (def string-data "[1,2,3]")
 (def json-node-data (utils/string->json-node string-data))
@@ -12,12 +11,13 @@
 
 (deftest variables
   (testing "passing variables in at compile time"
-    (let [script "[$var1, $var2]"
+    (let [script "[$var1, $var2, $var3]"
           processor-fn (jq/flexible-processor script {:output :string
-                                                      :vars {:var1 "\"hello\""
-                                                             "var2" (.textNode JsonNodeFactory/instance "world")}})
+                                                      :vars {:var1 "hello"
+                                                             "var2" "world"
+                                                             :var3 123}})
           resp (processor-fn "null")]
-      (is (= resp "[\"hello\",\"world\"]")))))
+      (is (= resp "[\"hello\",\"world\",123]")))))
 
 (deftest script-from-a-file
   (let [modules-dir "test/resources"
