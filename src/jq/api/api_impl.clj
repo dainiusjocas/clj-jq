@@ -1,6 +1,7 @@
 (ns ^{:doc    "Internal implementation details."
       :no-doc true}
   jq.api.api-impl
+  (:require [clojure.string :as str])
   (:import (java.util ArrayList)
            (net.thisptr.jackson.jq JsonQuery Versions Scope BuiltinFunctionLoader Output)
            (com.fasterxml.jackson.databind ObjectMapper JsonNode)
@@ -58,7 +59,7 @@
 ; Helper interface that specifies a method to get a string value.
 (definterface IContainer
   ; net.thisptr.jackson.jq/Output
-  (^com.fasterxml.jackson.databind.JsonNode getValue []))
+  (^java.lang.Iterable getValue []))
 
 ; Container class helper that implements the net.thisptr.jackson.jq.Output
 ; interface that enables the class to be used as a callback for JQ and exposes the
@@ -71,8 +72,7 @@
 
 (deftype MultiOutputContainer [^ArrayList container]
   Output
-  (emit [_ json-node]
-    (.add container json-node))
+  (emit [_ json-node] (.add container json-node))
   IContainer
   (getValue [_]
     (let [jsonArray (.arrayNode JsonNodeFactory/instance (.size container))]
@@ -88,7 +88,7 @@
   "Given a JSON data string and a JsonQuery object applies the query
   on the JSON data string and return JsonNode; may be given a custom IContainer"
   (^JsonNode [^JsonNode json-node ^JsonQuery json-query ^Scope scope ^IContainer output-container]
-    (let [^IContainer output-container (or output-container (SingleOutputContainer. nil))]
+    (let [^IContainer output-container (or output-container (NewMultiOutputContainer))]
       (.apply json-query (Scope/newChildScope scope) json-node output-container)
       (.getValue output-container)))
   (^JsonNode [^JsonNode json-node ^JsonQuery json-query ^Scope scope]
@@ -102,13 +102,16 @@
 
 (defn apply-json-query-on-string-data
   "Reads data JSON string into a JsonNode and passes to the query executor."
-  ^String [^String data ^JsonQuery query ^Scope scope ^IContainer output-container]
-  (json-node->string (apply-json-query-on-json-node (string->json-node data) query scope output-container)))
+  ^String [^String data ^JsonQuery query ^Scope scope]
+  (let [stream (-> (string->json-node data)
+                   (apply-json-query-on-json-node query scope (NewMultiOutputContainer)))]
+    (str/join "\n" (map json-node->string stream))))
 
 (defn apply-json-query-on-json-node-data
-  "Reads data JSON string into a JsonNode and passes to the query executor."
+  "Passes data in JsonNode to the query executor."
   ^String [^JsonNode data ^JsonQuery query ^Scope scope ^IContainer output-container]
-  (json-node->string (apply-json-query-on-json-node data query scope output-container)))
+  (let [stream (apply-json-query-on-json-node data query scope output-container)]
+    (str/join "\n" (map json-node->string stream))))
 
 (defn new-scope
   (^Scope [] (Scope/newChildScope root-scope))
