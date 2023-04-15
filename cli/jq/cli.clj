@@ -31,7 +31,9 @@
         (println (jq/json-node->string item)))
       (when (.ready ^Reader *in*)
         (doseq [^String line (line-seq (BufferedReader. *in*))]
-          (println (jq-processor line)))))))
+          (let [item (jq-processor line)]
+            (when-not (str/blank? item)
+              (println item))))))))
 
 (defn -main [& args]
   (let [{:keys               [options arguments errors summary]
