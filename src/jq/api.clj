@@ -4,6 +4,9 @@
 
 (set! *warn-on-reflection* true)
 
+; required in common use cases, so moving out of impl space
+(def json-node->string impl/json-node->string)
+
 ; jq docs http://manpages.ubuntu.com/manpages/hirsute/man1/jq.1.html
 (defn execute
   "Given a JSON data string (1) and a JQ query string (2)
@@ -16,7 +19,8 @@
    (impl/apply-json-query-on-string-data
      data
      (impl/compile-query query)
-     (impl/new-scope opts))))
+     (impl/new-scope opts)
+     (when (:multi opts) (impl/NewMultiOutputContainer)))))
 
 (defn processor
   "Given a JQ query string (1) compiles it and returns a function that given
@@ -27,7 +31,8 @@
    (let [^JsonQuery json-query (impl/compile-query query)
          ^Scope scope (impl/new-scope opts)]
      (fn ^String [^String data]
-       (impl/apply-json-query-on-string-data data json-query scope)))))
+       (impl/apply-json-query-on-string-data data json-query scope
+        (when (:multi opts) (impl/NewMultiOutputContainer)))))))
 
 (defn flexible-processor
   "Given a JQ query string (1) compiles it and returns a function that given
@@ -38,24 +43,25 @@
   ([^String query opts]
    (let [^JsonQuery query (impl/compile-query query)
          output-format (get opts :output :string)
-         ^Scope scope (impl/new-scope opts)]
+         ^Scope scope (impl/new-scope opts)
+         container (when (:multi opts) (impl/NewMultiOutputContainer))]
      (fn [json-data]
        (cond
          ; string => string
          (and (string? json-data) (= :string output-format))
-         (impl/apply-json-query-on-string-data json-data query scope)
+         (impl/apply-json-query-on-string-data json-data query scope container)
 
          ; string => json-node
          (and (string? json-data) (not= :string output-format))
-         (impl/apply-json-query-on-json-node (impl/string->json-node json-data) query scope)
+         (impl/apply-json-query-on-json-node (impl/string->json-node json-data) query scope container)
 
          ; json-node => string
          (and (not (string? json-data)) (= :string output-format))
-         (impl/apply-json-query-on-json-node-data json-data query scope)
+         (impl/apply-json-query-on-json-node-data json-data query scope container)
 
          ; json-node => json-node
          (and (not (string? json-data)) (not= :string output-format))
-         (impl/apply-json-query-on-json-node json-data query scope))))))
+         (impl/apply-json-query-on-json-node json-data query scope container))))))
 
 (comment
   (jq.api/execute "{\"a\":[1,2,3,4,5],\"b\":\"hello\"}" ".")
