@@ -2,8 +2,7 @@
       :no-doc true}
   jq.api.api-impl
   (:require [clojure.string :as str])
-  (:import (java.util ArrayList)
-           (net.thisptr.jackson.jq JsonQuery Versions Scope BuiltinFunctionLoader Output)
+  (:import (net.thisptr.jackson.jq JsonQuery Versions Scope BuiltinFunctionLoader Output)
            (com.fasterxml.jackson.databind ObjectMapper JsonNode)
            (com.fasterxml.jackson.databind.node ArrayNode JsonNodeFactory)
            (net.thisptr.jackson.jq.module.loaders ChainedModuleLoader BuiltinModuleLoader FileSystemModuleLoader)
@@ -76,12 +75,10 @@
 (defn apply-json-query-on-json-node
   "Given a JSON data string and a JsonQuery object applies the query
   on the JSON data string and return JsonNode; may be given a custom IContainer"
-  (^JsonNode [^JsonNode json-node ^JsonQuery json-query ^Scope scope ^IContainer output-container]
-    (let [^IContainer output-container (or output-container (NewMultiOutputContainer))]
-      (.apply json-query (Scope/newChildScope scope) json-node output-container)
-      (.getValue output-container)))
-  (^JsonNode [^JsonNode json-node ^JsonQuery json-query ^Scope scope]
-    (apply-json-query-on-json-node json-node json-query scope nil)))
+  ^JsonNode [^JsonNode json-node ^JsonQuery json-query ^Scope scope]
+  (let [^IContainer output-container (NewMultiOutputContainer)]
+    (.apply json-query (Scope/newChildScope scope) json-node output-container)
+    (.getValue output-container)))
 
 (defn string->json-node ^JsonNode [^String data]
   (.readTree mapper data))
