@@ -34,7 +34,7 @@
     };
     devShells = {
       default = pkgs.mkShell {
-        buildInputs = with pkgs; [ clojure graalvm17-ce ] ++ [ cljpkgs.deps-lock ];
+        buildInputs = with pkgs; [ clojure gnumake graalvm17-ce ] ++ [ cljpkgs.deps-lock ];
         shellHook = ''
           PS1='[clj-jq] '"$PS1"
         '';
