@@ -96,13 +96,14 @@
 (defn string-output-container []
   (StringOutputContainer. (ArrayList.)))
 
-(defn vector-output-container []
-  (let [container (transient [])]
-    (reify
-      Output
-      (emit [_ json-node] (conj! container json-node))
-      IContainer
-      (getValue [_] (persistent! container)))))
+(deftype CollectionOutputContainer [^ArrayList container]
+  Output
+  (emit [_ json-node] (.add container json-node))
+  IContainer
+  (getValue [_] container))
+
+(defn collection-output-container []
+  (CollectionOutputContainer. (ArrayList.)))
 
 (defn apply-json-query-on-json-node
   "Given a JSON data string and a JsonQuery object applies the query
@@ -115,7 +116,7 @@
 
 (defn stream-of-json-entities
   [^JsonNode json-node ^JsonQuery json-query ^Scope scope]
-  (apply-json-query-on-json-node json-node json-query scope (vector-output-container)))
+  (apply-json-query-on-json-node json-node json-query scope (collection-output-container)))
 
 (defn apply-json-query-on-json-node-data
   "Passes a JsonNode to the query executor."
