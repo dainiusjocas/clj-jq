@@ -8,6 +8,7 @@
 
 ; required in common use cases, so moving out of impl space
 (def json-node->string impl/json-node->string)
+(def string->json-node impl/string->json-node)
 
 ; jq docs http://manpages.ubuntu.com/manpages/hirsute/man1/jq.1.html
 (defn execute
