@@ -44,7 +44,7 @@
    (let [^JsonQuery query (impl/compile-query query)
          output-format (get opts :output :string)
          ^Scope scope (impl/new-scope opts)]
-     (fn [json-data]
+     (fn ^Iterable [json-data]
        (cond
          ; string => string
          (and (string? json-data) (= :string output-format))

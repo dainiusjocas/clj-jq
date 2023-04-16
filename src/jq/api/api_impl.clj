@@ -75,7 +75,7 @@
 (defn apply-json-query-on-json-node
   "Given a JSON data string and a JsonQuery object applies the query
   on the JSON data string and return JsonNode; may be given a custom IContainer"
-  ^JsonNode [^JsonNode json-node ^JsonQuery json-query ^Scope scope]
+  ^Iterable [^JsonNode json-node ^JsonQuery json-query ^Scope scope]
   (let [^IContainer output-container (NewMultiOutputContainer)]
     (.apply json-query (Scope/newChildScope scope) json-node output-container)
     (.getValue output-container)))
@@ -86,18 +86,16 @@
 (defn json-node->string ^String [^JsonNode data]
   (.writeValueAsString mapper data))
 
-(defn apply-json-query-on-string-data
-  "Reads data JSON string into a JsonNode and passes to the query executor."
-  ^String [^String data ^JsonQuery query ^Scope scope]
-  (let [stream (-> (string->json-node data)
-                   (apply-json-query-on-json-node query scope))]
-    (str/join "\n" (map json-node->string stream))))
-
 (defn apply-json-query-on-json-node-data
   "Passes a JsonNode to the query executor."
-  ^String [^JsonNode data ^JsonQuery query ^Scope scope]
+  ^Iterable [^JsonNode data ^JsonQuery query ^Scope scope]
   (let [stream (apply-json-query-on-json-node data query scope)]
-    (str/join "\n" (map json-node->string stream))))
+    (str/join "\n" (mapv json-node->string stream))))
+
+(defn apply-json-query-on-string-data
+  "Reads data JSON string into a JsonNode and passes to the query executor."
+  ^Iterable [^String data ^JsonQuery query ^Scope scope]
+  (apply-json-query-on-json-node-data (string->json-node data) query scope))
 
 (defn new-scope
   (^Scope [] (Scope/newChildScope root-scope))
