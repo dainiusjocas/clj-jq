@@ -1,10 +1,11 @@
 (ns ^{:doc    "Internal implementation details."
       :no-doc true}
   jq.api.api-impl
+  (:require [clojure.string :as str])
   (:import (java.util ArrayList)
            (net.thisptr.jackson.jq JsonQuery Versions Scope BuiltinFunctionLoader Output)
            (com.fasterxml.jackson.databind ObjectMapper JsonNode)
-           (com.fasterxml.jackson.databind.node JsonNodeFactory)
+           (com.fasterxml.jackson.databind.node ArrayNode JsonNodeFactory)
            (net.thisptr.jackson.jq.module.loaders ChainedModuleLoader BuiltinModuleLoader FileSystemModuleLoader)
            (net.thisptr.jackson.jq.module ModuleLoader)
            (java.nio.file Path)
@@ -55,60 +56,56 @@
     (.loadFunctions (BuiltinFunctionLoader/getInstance) jq-version scope)
     scope))
 
-; Helper interface that specifies a method to get a string value.
-(definterface IContainer
-  ; net.thisptr.jackson.jq/Output
-  (^com.fasterxml.jackson.databind.JsonNode getValue []))
-
-; Container class helper that implements the net.thisptr.jackson.jq.Output
-; interface that enables the class to be used as a callback for JQ and exposes the
-; unsynchronized-mutable container field for the result of the JQ transformation.
-(deftype SingleOutputContainer [^:unsynchronized-mutable ^JsonNode container]
-  Output
-  (emit [_ json-node] (set! container json-node))
-  IContainer
-  (getValue [_] container))
-
-(deftype MultiOutputContainer [^ArrayList container]
-  Output
-  (emit [_ json-node]
-    (.add container json-node))
-  IContainer
-  (getValue [_]
-    (let [jsonArray (.arrayNode JsonNodeFactory/instance (.size container))]
-      (doseq [^JsonNode item container]
-        (.add jsonArray item))
-      (.clear container)
-      jsonArray)))
-
-(defn NewMultiOutputContainer []
-  (MultiOutputContainer. (ArrayList.)))
-
-(defn apply-json-query-on-json-node
-  "Given a JSON data string and a JsonQuery object applies the query
-  on the JSON data string and return JsonNode; may be given a custom IContainer"
-  (^JsonNode [^JsonNode json-node ^JsonQuery json-query ^Scope scope ^IContainer output-container]
-    (let [^IContainer output-container (or output-container (SingleOutputContainer. nil))]
-      (.apply json-query (Scope/newChildScope scope) json-node output-container)
-      (.getValue output-container)))
-  (^JsonNode [^JsonNode json-node ^JsonQuery json-query ^Scope scope]
-    (apply-json-query-on-json-node json-node json-query scope nil)))
-
 (defn string->json-node ^JsonNode [^String data]
   (.readTree mapper data))
 
 (defn json-node->string ^String [^JsonNode data]
   (.writeValueAsString mapper data))
 
-(defn apply-json-query-on-string-data
-  "Reads data JSON string into a JsonNode and passes to the query executor."
-  ^String [^String data ^JsonQuery query ^Scope scope ^IContainer output-container]
-  (json-node->string (apply-json-query-on-json-node (string->json-node data) query scope output-container)))
+; Helper interface that specifies a method to get a string value.
+(definterface IContainer
+  ; net.thisptr.jackson.jq/Output
+  (^java.lang.Iterable getValue []))
+
+; Container class helper that implements the net.thisptr.jackson.jq.Output
+; interface that enables the class to be used as a callback for JQ and exposes the
+; unsynchronized-mutable container field for the result of the JQ transformation.
+(deftype JsonNodeOutputContainer [^ArrayNode container]
+  Output
+  (emit [_ json-node] (.add container json-node))
+  IContainer
+  (getValue [_] container))
+
+(defn json-node-output-container []
+  (JsonNodeOutputContainer. (.arrayNode JsonNodeFactory/instance)))
+
+(deftype StringOutputContainer [^ArrayList container]
+  Output
+  (emit [_ json-node] (.add container (json-node->string json-node)))
+  IContainer
+  (getValue [_] container))
+
+(defn string-output-container []
+  (StringOutputContainer. (ArrayList.)))
+
+(defn apply-json-query-on-json-node
+  "Given a JSON data string and a JsonQuery object applies the query
+  on the JSON data string and return JsonNode; may be given a custom IContainer"
+  ([^JsonNode json-node ^JsonQuery json-query ^Scope scope ^IContainer container]
+   (.apply json-query (Scope/newChildScope scope) json-node container)
+   (.getValue container))
+  ([^JsonNode json-node ^JsonQuery json-query ^Scope scope]
+   (apply-json-query-on-json-node json-node json-query scope (json-node-output-container))))
 
 (defn apply-json-query-on-json-node-data
+  "Passes a JsonNode to the query executor."
+  ^String [^JsonNode data ^JsonQuery query ^Scope scope]
+  (str/join "\n" (apply-json-query-on-json-node data query scope (string-output-container))))
+
+(defn apply-json-query-on-string-data
   "Reads data JSON string into a JsonNode and passes to the query executor."
-  ^String [^JsonNode data ^JsonQuery query ^Scope scope ^IContainer output-container]
-  (json-node->string (apply-json-query-on-json-node data query scope output-container)))
+  ^String [^String data ^JsonQuery query ^Scope scope]
+  (apply-json-query-on-json-node-data (string->json-node data) query scope))
 
 (defn new-scope
   (^Scope [] (Scope/newChildScope root-scope))
