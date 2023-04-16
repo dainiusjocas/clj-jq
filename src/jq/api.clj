@@ -1,6 +1,8 @@
 (ns jq.api
   (:require [jq.api.api-impl :as impl])
-  (:import (net.thisptr.jackson.jq JsonQuery Scope)))
+  (:import (com.fasterxml.jackson.databind JsonNode)
+           (java.util Collection)
+           (net.thisptr.jackson.jq JsonQuery Scope)))
 
 (set! *warn-on-reflection* true)
 
@@ -69,6 +71,18 @@
             (and (not (string? json-data)) (not= :string output-format))
             (impl/apply-json-query-on-json-node json-data query call-scope))))))))
 
+(defn stream-processor
+  "Given a JQ query string (1) compiles it and returns a function that given
+  a JsonNode object will return an Collection.
+  Returning an `Collection` handles that a JQ script returns 0 or more JSON entities.
+  Accepts optional options map."
+  ([^String query] (stream-processor query {}))
+  ([^String query opts]
+   (let [^JsonQuery query (impl/compile-query query)
+         ^Scope scope (impl/new-scope opts)]
+     (fn ^Collection [^JsonNode data]
+       (impl/stream-of-json-entities data query scope)))))
+
 (comment
   (jq.api/execute "{\"a\":[1,2,3,4,5],\"b\":\"hello\"}" ".")
 
@@ -76,4 +90,6 @@
 
   ((jq.api/flexible-processor "." {:module-paths ["test/resources"]}) "{\"a\":[1,2,3,4,5],\"b\":\"hello\"}")
 
-  ((jq.api/flexible-processor "." {:output :json-node}) "{\"a\":[1,2,3,4,5],\"b\":\"hello\"}"))
+  ((jq.api/flexible-processor "." {:output :json-node}) "{\"a\":[1,2,3,4,5],\"b\":\"hello\"}")
+
+  ((jq.api/stream-processor "." {}) (impl/->JsonNode {"a" "b"})))
