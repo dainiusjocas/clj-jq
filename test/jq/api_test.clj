@@ -17,7 +17,13 @@
                                                              "var2" "world"
                                                              :var3 123}})
           resp (processor-fn "null")]
-      (is (= resp "[\"hello\",\"world\",123]")))))
+      (is (= resp "[\"hello\",\"world\",123]"))))
+  (testing "passing variables in at runtime"
+    (let [script "[$cvar, $rvar]"
+          processor-fn (jq/flexible-processor script {:output :string
+                                                      :vars {:cvar "compile"}})
+          resp (processor-fn "null" {:vars {:rvar "run"}})]
+      (is (= resp "[\"compile\",\"run\"]")))))
 
 (deftest script-from-a-file
   (let [modules-dir "test/resources"

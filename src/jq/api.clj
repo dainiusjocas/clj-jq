@@ -31,8 +31,11 @@
   ([^String query opts]
    (let [^JsonQuery json-query (impl/compile-query query)
          ^Scope scope (impl/new-scope opts)]
-     (fn ^String [^String data]
-       (impl/apply-json-query-on-string-data data json-query scope)))))
+     (fn this
+       (^String [^String data]
+         (this data nil))
+       (^String [^String data {:keys [vars]}]
+         (impl/apply-json-query-on-string-data data json-query (impl/scope-with-vars scope vars)))))))
 
 (defn flexible-processor
   "Given a JQ query string (1) compiles it and returns a function that given
@@ -44,23 +47,27 @@
    (let [^JsonQuery query (impl/compile-query query)
          output-format (get opts :output :string)
          ^Scope scope (impl/new-scope opts)]
-     (fn [json-data]
-       (cond
-         ; string => string
-         (and (string? json-data) (= :string output-format))
-         (impl/apply-json-query-on-string-data json-data query scope)
+     (fn this
+       ([json-data]
+        (this json-data nil))
+       ([json-data {:keys [vars]}]
+        (let [^Scope call-scope (if vars (impl/scope-with-vars scope vars) scope)]
+          (cond
+            ; string => string
+            (and (string? json-data) (= :string output-format))
+            (impl/apply-json-query-on-string-data json-data query call-scope)
 
-         ; string => json-node
-         (and (string? json-data) (not= :string output-format))
-         (impl/apply-json-query-on-json-node (impl/string->json-node json-data) query scope)
+            ; string => json-node
+            (and (string? json-data) (not= :string output-format))
+            (impl/apply-json-query-on-json-node (impl/string->json-node json-data) query call-scope)
 
-         ; json-node => string
-         (and (not (string? json-data)) (= :string output-format))
-         (impl/apply-json-query-on-json-node-data json-data query scope)
+            ; json-node => string
+            (and (not (string? json-data)) (= :string output-format))
+            (impl/apply-json-query-on-json-node-data json-data query call-scope)
 
-         ; json-node => json-node
-         (and (not (string? json-data)) (not= :string output-format))
-         (impl/apply-json-query-on-json-node json-data query scope))))))
+            ; json-node => json-node
+            (and (not (string? json-data)) (not= :string output-format))
+            (impl/apply-json-query-on-json-node json-data query call-scope))))))))
 
 (comment
   (jq.api/execute "{\"a\":[1,2,3,4,5],\"b\":\"hello\"}" ".")
