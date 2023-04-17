@@ -56,6 +56,14 @@
     (.loadFunctions (BuiltinFunctionLoader/getInstance) jq-version scope)
     scope))
 
+(defn scope-with-vars ^Scope [^Scope old-scope vars]
+  (if vars
+    (let [scope (Scope/newChildScope old-scope)]
+      (doseq [[key value] vars]
+        (.setValue scope (name key) (->JsonNode value)))
+      scope)
+    old-scope))
+
 (defn string->json-node ^JsonNode [^String data]
   (.readTree mapper data))
 
