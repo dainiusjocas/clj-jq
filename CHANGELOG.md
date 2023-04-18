@@ -10,6 +10,7 @@ For a list of breaking changes, check [here](#breaking-changes).
 - Allow JQ variables to be passed at execution time #38 (Thanks to @charles-dyfis-net)
 - API to return a stream of JSON entities #41
 - Transducers API #42
+- CLI: pretty print output by default, flag `-c` for compact #44
 
 ## v1.2.1
 
