@@ -9,11 +9,13 @@
                                                :exclusions  [org.slf4j/slf4j-log4j12
                                                              org.slf4j/slf4j-api
                                                              org.slf4j/slf4j-nop]}
-                 criterium/criterium          {:mvn/version "0.4.6"}}}
+                 criterium/criterium          {:mvn/version "0.4.6"}
+                 metosin/jsonista             {:mvn/version "0.3.7"}}}
   :test
   {:extra-paths ["test" "test/resources"]
    :extra-deps  {com.cognitect/test-runner {:git/url "https://github.com/cognitect-labs/test-runner.git"
-                                            :sha     "7284cda41fb9edc0f3bc6b6185cfb7138fc8a023"}}
+                                            :sha     "7284cda41fb9edc0f3bc6b6185cfb7138fc8a023"}
+                 metosin/jsonista          {:mvn/version "0.3.7"}}
    :main-opts   ["-m" "cognitect.test-runner"]}
   :clj-kondo
   {:main-opts  ["-m" "clj-kondo.main" "--lint" "src" "test"]

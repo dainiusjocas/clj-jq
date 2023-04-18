@@ -17,10 +17,19 @@
 
 (def jq-version Versions/JQ_1_6)
 
-(defn ->JsonNode ^JsonNode [data]
-  (if (instance? JsonNode data)
-    data
-    (.valueToTree mapper data)))
+(defn ->JsonNode
+  (^JsonNode [data] (->JsonNode mapper data))
+  (^JsonNode [^ObjectMapper mapper data]
+   (if (instance? JsonNode data)
+     data
+     (.valueToTree mapper data))))
+
+(defn JsonNode->clj
+  "Converts JsonNode to a Clojure value.
+  An optional object mapper can be passed to handle data types such as keywords."
+  ([^JsonNode json-node] (JsonNode->clj mapper json-node))
+  ([^ObjectMapper mapper ^JsonNode json-node]
+   (.treeToValue mapper json-node ^Class Object)))
 
 (defn ->absolute-path
   "FileSystemModuleLoader requires absolute paths."
@@ -64,11 +73,15 @@
       scope)
     old-scope))
 
-(defn string->json-node ^JsonNode [^String data]
-  (.readTree mapper data))
+(defn string->json-node
+  (^JsonNode [^String data] (string->json-node mapper data))
+  (^JsonNode [^ObjectMapper mapper ^String data]
+   (.readTree mapper data)))
 
-(defn json-node->string ^String [^JsonNode data]
-  (.writeValueAsString mapper data))
+(defn json-node->string
+  (^String [^JsonNode data] (json-node->string mapper data))
+  (^String [^ObjectMapper mapper ^JsonNode data]
+   (.writeValueAsString mapper data)))
 
 ; Helper interface that specifies a method to get a string value.
 (definterface IContainer
