@@ -5,13 +5,13 @@
 
 (deftest transducers-interface
   (let [data [1 2 3]
-        query ".+1"
+        expression ".+1"
         expected-result [2 3 4]]
     (testing "mapper"
       (is (= expected-result
              (sequence (comp
                          (jq/->JsonNode)
-                         (jq/execute query)
+                         (jq/execute expression)
                          (jq/JsonNode->value))
                        data))))
 
@@ -43,7 +43,7 @@
       (is (= expected-result
              (sequence (comp
                          (jq/->JsonNode)
-                         (jq/execute query {:cat false})
+                         (jq/execute expression {:cat false})
                          cat
                          (jq/JsonNode->value))
                        data))))
@@ -52,14 +52,14 @@
       (is (= [3 4 5]
              (sequence (comp
                          (jq/->JsonNode)
-                         (jq/execute query)
-                         (jq/execute query)
+                         (jq/execute expression)
+                         (jq/execute expression)
                          (jq/JsonNode->value))
                        data))))))
 
 (deftest custom-mappers
   (let [data [{:a :b}]
-        query "."]
+        expression "."]
     (testing "default object mapper is bad at keywords"
       (is (= [{":a" {"name"      "b"
                      "namespace" nil
@@ -67,7 +67,7 @@
                                   "namespace" nil}}}]
              (sequence (comp
                          (jq/->JsonNode)
-                         (jq/execute query)
+                         (jq/execute expression)
                          (jq/JsonNode->value))
                        data))))
     (testing "keyword aware mappers"
@@ -75,7 +75,7 @@
         (is (= [{:a "b"}]
                (sequence (comp
                            (jq/->JsonNode mapper)
-                           (jq/execute query)
+                           (jq/execute expression)
                            (jq/JsonNode->value mapper))
                          data)))))
 
@@ -97,6 +97,6 @@
 
 (deftest convenience-transducer
   (let [data [1 2 3]
-        query "(. , .)"]
+        expression "(. , .)"]
     (is (= [1 1 2 2 3 3]
-           (sequence (jq/process query) data)))))
+           (sequence (jq/process expression) data)))))
