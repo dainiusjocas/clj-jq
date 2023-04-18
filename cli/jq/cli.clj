@@ -3,11 +3,12 @@
   (:require [clojure.java.io :as io]
             [clojure.string :as str]
             [clojure.tools.cli :as cli]
-            [jq.api :as jq])
+            [jq.transducers :as jq])
   (:import (java.io Reader BufferedReader)))
 
 (def cli-options
-  [["-h" "--help"]])
+  [["-c" "--[no-]compact" "compact instead of pretty-printed output." :default false]
+   ["-h" "--help"]])
 
 (defn handle-args [args]
   (cli/parse-opts args cli-options))
@@ -23,16 +24,18 @@
   (println "Supported options:")
   (println summary))
 
-(defn execute [jq-filter files _]
-  (let [jq-processor (jq/stream-processor jq-filter)]
-    (if (seq files)
-      (doseq [f files
-              item (jq-processor (jq/string->json-node (slurp f)))]
-        (println (jq/json-node->string item)))
-      (when (.ready ^Reader *in*)
-        (doseq [^String line (line-seq (BufferedReader. *in*))
-                item (jq-processor (jq/string->json-node line))]
-          (println (jq/json-node->string item)))))))
+(defn printer
+  ([_])
+  ([_ item] (println item)))
+(defn execute [jq-expression files opts]
+  (let [xfs [(when (seq files) (map slurp))
+             (jq/parse)
+             (jq/execute jq-expression)
+             (if (:compact opts) (jq/serialize) (jq/pretty-print))]
+        xf (apply comp (remove nil? xfs))
+        values (or (seq files) (when (.ready ^Reader *in*)
+                                 (line-seq (BufferedReader. *in*))))]
+    (transduce xf printer nil values)))
 
 (defn -main [& args]
   (let [{:keys               [options arguments errors summary]
