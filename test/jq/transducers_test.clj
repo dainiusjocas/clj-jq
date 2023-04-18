@@ -12,7 +12,7 @@
              (sequence (comp
                          (jq/->JsonNode)
                          (jq/execute query)
-                         (jq/JsonNode->clj))
+                         (jq/JsonNode->value))
                        data))))
 
     (testing "string input is not parsed, it is converted to TextNode as is"
@@ -20,7 +20,7 @@
              (sequence (comp
                          (jq/->JsonNode)
                          (jq/execute ".")
-                         (jq/JsonNode->clj))
+                         (jq/JsonNode->value))
                        ["test"]))))
 
     (testing "JSON string parser, it is converted to TextNode as is"
@@ -28,7 +28,7 @@
              (sequence (comp
                          (jq/parse)
                          (jq/execute ".")
-                         (jq/JsonNode->clj))
+                         (jq/JsonNode->value))
                        [(json/write-value-as-string {"foo" "bar"})]))))
 
     (testing "string serializer"
@@ -45,7 +45,7 @@
                          (jq/->JsonNode)
                          (jq/execute query {:cat false})
                          cat
-                         (jq/JsonNode->clj))
+                         (jq/JsonNode->value))
                        data))))
 
     (testing "multiple scripts in a row"
@@ -54,7 +54,7 @@
                          (jq/->JsonNode)
                          (jq/execute query)
                          (jq/execute query)
-                         (jq/JsonNode->clj))
+                         (jq/JsonNode->value))
                        data))))))
 
 (deftest custom-mappers
@@ -68,7 +68,7 @@
              (sequence (comp
                          (jq/->JsonNode)
                          (jq/execute query)
-                         (jq/JsonNode->clj))
+                         (jq/JsonNode->value))
                        data))))
     (testing "keyword aware mappers"
       (let [mapper json/keyword-keys-object-mapper]
@@ -76,7 +76,7 @@
                (sequence (comp
                            (jq/->JsonNode mapper)
                            (jq/execute query)
-                           (jq/JsonNode->clj mapper))
+                           (jq/JsonNode->value mapper))
                          data)))))
 
     (testing "parser and serializer"

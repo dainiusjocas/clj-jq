@@ -10,7 +10,7 @@
   ([^ObjectMapper mapper]
    (map (partial impl/->JsonNode mapper))))
 
-(defn JsonNode->clj
+(defn JsonNode->value
   "Returns a transducer that give a JsonNode maps it to a Java Object.
   Accepts an optional Jackson ObjectMapper."
   ([] (map impl/JsonNode->clj))
@@ -67,7 +67,7 @@
    (comp
      (->JsonNode mapper)
      (execute expression (assoc opts :cat true))
-     (JsonNode->clj mapper))))
+     (JsonNode->value mapper))))
 
 (comment
   ; Duplicates input
@@ -75,7 +75,7 @@
         (comp
           (->JsonNode)
           (execute "(. , .)")
-          (JsonNode->clj))
+          (JsonNode->value))
         [1 2 3])
 
   (into [] (process "(. , .)") [1 2 3]))
