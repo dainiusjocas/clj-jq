@@ -25,8 +25,10 @@
   (println summary))
 
 (defn printer
+  "Reducing function that just prints stuff to stdout. Ignores accumulator."
   ([_])
   ([_ item] (println item)))
+
 (defn execute [jq-expression files opts]
   (let [xfs [(when (seq files) (map slurp))
              (jq/parse)
