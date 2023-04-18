@@ -4,7 +4,8 @@
             [clojure.string :as str]
             [clojure.tools.cli :as cli]
             [jq.transducers :as jq])
-  (:import (java.io Reader BufferedReader)))
+  (:import (clojure.lang IReduceInit)
+           (java.io Reader BufferedReader)))
 
 (def cli-options
   [["-c" "--[no-]compact" "compact instead of pretty-printed output." :default false]
@@ -24,17 +25,32 @@
   (println "Supported options:")
   (println summary))
 
+(defn lines-from-stdin
+  "Reads lines from the stdin and pushes them further."
+  []
+  (let [^BufferedReader rdr (BufferedReader. *in*)]
+    (reify IReduceInit
+      (reduce [_ f init]
+        (try
+          (loop [state init]
+            (if (reduced? state)
+              state
+              (if-let [line (.readLine rdr)]
+                (recur (f state line))
+                state)))
+          (finally (.close rdr)))))))
+
 (defn printer
   ([_])
   ([_ item] (println item)))
+
 (defn execute [jq-expression files opts]
   (let [xfs [(when (seq files) (map slurp))
              (jq/parse)
              (jq/execute jq-expression)
              (if (:compact opts) (jq/serialize) (jq/pretty-print))]
         xf (apply comp (remove nil? xfs))
-        values (or (seq files) (when (.ready ^Reader *in*)
-                                 (line-seq (BufferedReader. *in*))))]
+        values (or (seq files) (when (.ready ^Reader *in*) (lines-from-stdin)))]
     (transduce xf printer nil values)))
 
 (defn -main [& args]
