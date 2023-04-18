@@ -83,6 +83,52 @@ join `jq` script strings with `|` character.
 => "[4,3,2]"
 ```
 
+## Transducer API
+
+[Transducers](https://clojure.org/reference/transducers) are composable algorithmic transformations.
+They fit really well with the JQ model: expression produces a sequence of 0 or more JSON [entities](https://github.com/pkoppstein/jq/wiki/A-Stream-oriented-Introduction-to-jq#json-entities-and-json-streams).
+
+```clojure
+(require '[jq.transducers :as jq])
+
+; Duplicate every value
+(into []
+      (comp
+        (jq/->JsonNode)
+        (jq/execute "(. , .)")
+        (jq/JsonNode->value))
+      [1 2 3])
+=> [1 1 2 2 3 3]
+
+; Several JQ expressions in a row
+; NOTE: It is efficient because no serializations/deserializations are done between executions of expressions 
+(into []
+      (comp
+        (jq/->JsonNode)
+        (jq/execute ". + 1")
+        (jq/execute ". + 1")
+        (jq/JsonNode->value))
+      [1 2 3])
+=> [3 4 5]
+
+; JSON string to JSON string
+(sequence (comp
+            (jq/parse)
+            (jq/execute ".foo |= 2")
+            (jq/serialize))
+          ["{\"foo\":1}"])
+=> '("{\"foo\":2}")
+
+; A convenient "common-use-case" transducer
+(into [] (jq/process "(. , .)") [1 2 3])
+=>  [1 1 2 2 3 3]
+```
+
+A custom Jackson `ObjectMapper` can be provided for most transducers.
+E.g. you could take an `ObjectMapper` from the [`jsonista`](https://github.com/metosin/jsonista) library and supply it to transducers.
+
+For available transducers check [here](src/jq/transducers.clj).
+
 ## Performance
 
 ```clojure
