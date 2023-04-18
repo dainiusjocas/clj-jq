@@ -73,11 +73,15 @@
       scope)
     old-scope))
 
-(defn string->json-node ^JsonNode [^String data]
-  (.readTree mapper data))
+(defn string->json-node
+  (^JsonNode [^String data] (string->json-node mapper data))
+  (^JsonNode [^ObjectMapper mapper ^String data]
+   (.readTree mapper data)))
 
-(defn json-node->string ^String [^JsonNode data]
-  (.writeValueAsString mapper data))
+(defn json-node->string
+  (^String [^JsonNode data] (json-node->string mapper data))
+  (^String [^ObjectMapper mapper ^JsonNode data]
+   (.writeValueAsString mapper data)))
 
 ; Helper interface that specifies a method to get a string value.
 (definterface IContainer

@@ -12,10 +12,24 @@
 
 (defn JsonNode->clj
   "Returns a transducer that give a JsonNode maps it to a Java Object.
-  Accepts an optional Jackson ObjectMapper"
+  Accepts an optional Jackson ObjectMapper."
   ([] (map impl/JsonNode->clj))
   ([^ObjectMapper mapper]
    (map (partial impl/JsonNode->clj mapper))))
+
+(defn parser
+  "Returns a transducer that given a JSON String parses it into a JsonNode.
+  Accepts an optional Jackson ObjectMapper."
+  ([] (map impl/string->json-node))
+  ([^ObjectMapper mapper]
+   (map (partial impl/string->json-node mapper))))
+
+(defn serializer
+  "Returns a transducer that given a JsonNode serializes it to a String.
+  Accepts an optional Jackson ObjectMapper."
+  ([] (map impl/json-node->string))
+  ([^ObjectMapper mapper]
+   (map (partial impl/json-node->string mapper))))
 
 (defn search
   "Returns a transducer that accepts JsonNode on which
@@ -31,8 +45,7 @@
        (comp xf cat)))))
 
 (defn process
-  "Convenience function.
-  Returns a transducer that:
+  "Returns a convenience transducer that:
   - maps a Java Object to a JsonNode
   - maps a JQ query on the JsonNode
   - catenates the output
