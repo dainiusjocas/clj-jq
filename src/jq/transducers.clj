@@ -33,39 +33,40 @@
 
 ;; Pretty printer serializer
 (defn pretty-printer
-  "Same as the `serializer` but the output string is indented."
+  "Same as the `serializer` but the output string is indented.
+  ObjectMapper is copied to prevent side effects in case mapper is shared."
   ([] (pretty-printer impl/mapper))
   ([^ObjectMapper mapper]
    (map (partial impl/json-node->string
-                 (.enable mapper SerializationFeature/INDENT_OUTPUT)))))
+                 (.enable (.copy mapper) SerializationFeature/INDENT_OUTPUT)))))
 
 (defn search
   "Returns a transducer that accepts JsonNode on which
-  the query will be applied.
+  the expression will be applied.
   Optional opts are supported that are passed for the `jq.api/stream-processor`.
   Specific opts for the transducer:
     :cat - whether to catenate output, default true"
-  ([^String query] (search query {}))
-  ([^String query opts]
-   (let [xf (map (api/stream-processor query opts))]
+  ([^String expression] (search expression {}))
+  ([^String expression opts]
+   (let [xf (map (api/stream-processor expression opts))]
      (if (false? (:cat opts))
        xf
        (comp xf cat)))))
 
 (defn process
   "Returns a convenience transducer that:
-  - maps a Java Object to a JsonNode
-  - maps a JQ query on the JsonNode
-  - catenates the output
+  - maps a Java Object to a JsonNode;
+  - maps a JQ expression on the JsonNode;
+  - catenates the output;
   - maps a JsonNode to a JavaObject.
   Accept opts that will be passed to the `jq.api/stream-processor`
   Accepts a Jackson ObjectMapper that will be used for both"
-  ([^String query] (process query {}))
-  ([^String query opts] (process query opts impl/mapper))
-  ([^String query opts ^ObjectMapper mapper]
+  ([^String expression] (process expression {}))
+  ([^String expression opts] (process expression opts impl/mapper))
+  ([^String expression opts ^ObjectMapper mapper]
    (comp
      (->JsonNode mapper)
-     (search query (assoc opts :cat true))
+     (search expression (assoc opts :cat true))
      (JsonNode->clj mapper))))
 
 (comment
