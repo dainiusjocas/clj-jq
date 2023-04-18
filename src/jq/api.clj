@@ -81,8 +81,11 @@
   ([^String query opts]
    (let [^JsonQuery query (impl/compile-query query)
          ^Scope scope (impl/new-scope opts)]
-     (fn ^Collection [^JsonNode data]
-       (impl/stream-of-json-entities data query scope)))))
+     (fn this
+       (^Collection [^JsonNode data] (this data nil))
+       (^Collection [^JsonNode data {:keys [vars]}]
+        (let [^Scope call-scope (if vars (impl/scope-with-vars scope vars) scope)]
+          (impl/stream-of-json-entities data query call-scope)))))))
 
 (comment
   (jq.api/execute "{\"a\":[1,2,3,4,5],\"b\":\"hello\"}" ".")

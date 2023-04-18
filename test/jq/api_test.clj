@@ -116,4 +116,11 @@
     (let [processor-fn (jq/stream-processor ".[] | (. , .)")
           out (processor-fn json-node-data)]
       (is (= 6 (count out)))
-      (is (= ["1" "1" "2" "2" "3" "3"] (mapv utils/json-node->string out))))))
+      (is (= ["1" "1" "2" "2" "3" "3"] (mapv utils/json-node->string out)))))
+  (testing "passing variables in at runtime"
+    (let [script "[$cvar, $rvar]"
+          processor-fn (jq/stream-processor script {:vars {:cvar "compile"}})
+          resp (-> (utils/string->json-node "null")
+                   (processor-fn {:vars {:rvar "run"}}))]
+      (is (= 1 (count resp)))
+      (is (= "[\"compile\",\"run\"]" (-> resp first utils/json-node->string))))))
