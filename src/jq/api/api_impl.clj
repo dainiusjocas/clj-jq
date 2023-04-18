@@ -17,13 +17,19 @@
 
 (def jq-version Versions/JQ_1_6)
 
-(defn ->JsonNode ^JsonNode [data]
-  (if (instance? JsonNode data)
-    data
-    (.valueToTree mapper data)))
+(defn ->JsonNode
+  (^JsonNode [data] (->JsonNode mapper data))
+  (^JsonNode [^ObjectMapper mapper data]
+   (if (instance? JsonNode data)
+     data
+     (.valueToTree mapper data))))
 
-(defn JsonNode->clj [^JsonNode json-node]
-  (.treeToValue mapper json-node ^Class Object))
+(defn JsonNode->clj
+  "Converts JsonNode to a Clojure value.
+  An optional object mapper can be passed to handle data types such as keywords."
+  ([^JsonNode json-node] (JsonNode->clj mapper json-node))
+  ([^ObjectMapper mapper ^JsonNode json-node]
+   (.treeToValue mapper json-node ^Class Object)))
 
 (defn ->absolute-path
   "FileSystemModuleLoader requires absolute paths."

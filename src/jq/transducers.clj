@@ -1,12 +1,17 @@
 (ns jq.transducers
   (:require [jq.api :as api]
-            [jq.api.api-impl :as impl]))
+            [jq.api.api-impl :as impl])
+  (:import (com.fasterxml.jackson.databind ObjectMapper)))
 
-(defn ->JsonNode []
-  (map impl/->JsonNode))
+(defn ->JsonNode
+  ([] (map impl/->JsonNode))
+  ([^ObjectMapper mapper]
+   (map (partial impl/->JsonNode mapper))))
 
-(defn JsonNode->clj []
-  (map impl/JsonNode->clj))
+(defn JsonNode->clj
+  ([] (map impl/JsonNode->clj))
+  ([^ObjectMapper mapper]
+   (map (partial impl/JsonNode->clj mapper))))
 
 (defn search [^String query]
   (map (api/stream-processor query)))
