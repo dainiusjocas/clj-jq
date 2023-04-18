@@ -4,7 +4,7 @@
 
 # clj-jq
 
-A library to execute [`jq`](https://stedolan.github.io/jq/) scripts on JSON data within a Clojure application.
+A library to execute [`jq`](https://stedolan.github.io/jq/) expressions on JSON data within a Clojure application.
 It is a thin wrapper around [jackson-jq](https://github.com/eiiches/jackson-jq):
 a pure Java `jq` Implementation for Jackson JSON Processor.
 
@@ -23,37 +23,38 @@ Also, it creates difficulties to use this library with the GraalVM native-image.
 
 The library is intended to be used for stream processing.
 
-### Compiling a script to execute it multiple times
-
 ```clojure
 (require '[jq.api :as jq])
 
 (let [data "[1,2,3]"
-      query "map(.+1)"
-      processor-fn (jq/processor query)]
-  (processor-fn data))
-=> "[2,3,4]"
+      expression "map(.+1)"
+      processor-fn (jq/stream-processor expression)]
+  (processor-fn (jq/string->json-node data)))
+=> [#object[com.fasterxml.jackson.databind.node.ArrayNode 0x8b78e9e "[2,3,4]"]]
 ```
+
+NOTE: the input and output is of the `JsonNode` type.
 
 ### Loading JQ modules from the filesystem
 
 File with contents:
 ```shell
+; Prepare a module files
 cat /path/to/script.jq
 => def increment(number): number + 1;
 ```
 
 ```clojure
 (let [data "[1,2,3]"
-      query "include \"scripts\"; map(increment(.))"
-      processor-fn (jq/processor query {:modules ["/path/to"]})]
+      expression "include \"scripts\"; map(increment(.))"
+      processor-fn (jq/processor expression {:modules ["/path/to"]})]
   (processor-fn data))
 => "[2,3,4]"
 ```
 
 Multiple modules can be provided.
 
-Inlined example:
+## Inlined example
 
 ```clojure
 ((jq/processor "map(.+1)") "[1,2,3]")
@@ -64,8 +65,8 @@ Inlined example:
 
 ```clojure
 (let [data "[1,2,3]"
-      query "map(.+1)"]
-  (jq/execute data query))
+      expression "map(.+1)"]
+  (jq/execute data expression))
 => "[2,3,4]"
 ```
 
@@ -78,8 +79,8 @@ join `jq` script strings with `|` character.
 (let [data "[1,2,3]"
       script-inc "map(.+1)"
       script-reverse "reverse"
-      query (clojure.string/join " | " [script-inc script-reverse])]
-  (jq/execute data query))
+      expression (clojure.string/join " | " [script-inc script-reverse])]
+  (jq/execute data expression))
 => "[4,3,2]"
 ```
 
@@ -131,18 +132,19 @@ For available transducers check [here](src/jq/transducers.clj).
 
 ## Performance
 
+On MacBook pro M1 Max laptop: 
 ```clojure
 (use 'criterium.core)
 (let [jq-script (time (jq/processor ".a[] |= sqrt"))]
   (quick-bench (jq-script "{\"a\":[10,2,3,4,5],\"b\":\"hello\"}")))
 =>
-"Elapsed time: 0.063264 msecs"
-Evaluation count : 198870 in 6 samples of 33145 calls.
-Execution time mean : 3.687955 µs
-Execution time std-deviation : 668.209042 ns
-Execution time lower quantile : 3.041275 µs ( 2.5%)
-Execution time upper quantile : 4.280444 µs (97.5%)
-Overhead used : 1.766661 ns
+"Elapsed time: 0.257709 msecs"
+Evaluation count : 334260 in 6 samples of 55710 calls.
+Execution time mean : 1.812567 µs
+Execution time std-deviation : 24.996676 ns
+Execution time lower quantile : 1.788598 µs ( 2.5%)
+Execution time upper quantile : 1.849297 µs (97.5%)
+Overhead used : 1.840854 ns
 ```
 
 ## Future work

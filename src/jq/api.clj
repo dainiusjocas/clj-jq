@@ -96,4 +96,9 @@
 
   ((jq.api/flexible-processor "." {:output :json-node}) "{\"a\":[1,2,3,4,5],\"b\":\"hello\"}")
 
-  ((jq.api/stream-processor "." {}) (impl/->JsonNode {"a" "b"})))
+  (let [data "[1,2,3]"
+        expression "map(.+1)"
+        processor-fn (stream-processor expression)]
+    (processor-fn (string->json-node data)))
+
+  ((jq.api/stream-processor "." {}) (jq.api/string->json-node {"a" "b"})))
