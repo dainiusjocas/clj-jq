@@ -96,6 +96,15 @@
 (defn string-output-container []
   (StringOutputContainer. (ArrayList.)))
 
+(deftype CollectionOutputContainer [^ArrayList container]
+  Output
+  (emit [_ json-node] (.add container json-node))
+  IContainer
+  (getValue [_] container))
+
+(defn collection-output-container []
+  (CollectionOutputContainer. (ArrayList.)))
+
 (defn apply-json-query-on-json-node
   "Given a JSON data string and a JsonQuery object applies the query
   on the JSON data string and return JsonNode; may be given a custom IContainer"
@@ -104,6 +113,10 @@
    (.getValue container))
   ([^JsonNode json-node ^JsonQuery json-query ^Scope scope]
    (apply-json-query-on-json-node json-node json-query scope (json-node-output-container))))
+
+(defn stream-of-json-entities
+  [^JsonNode json-node ^JsonQuery json-query ^Scope scope]
+  (apply-json-query-on-json-node json-node json-query scope (collection-output-container)))
 
 (defn apply-json-query-on-json-node-data
   "Passes a JsonNode to the query executor."

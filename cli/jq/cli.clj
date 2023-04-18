@@ -24,14 +24,14 @@
   (println summary))
 
 (defn execute [jq-filter files _]
-  (let [jq-processor (jq/flexible-processor jq-filter {:output :json-node})]
+  (let [jq-processor (jq/stream-processor jq-filter)]
     (if (seq files)
       (doseq [f files
-              item (jq-processor (slurp f))]
+              item (jq-processor (jq/string->json-node (slurp f)))]
         (println (jq/json-node->string item)))
       (when (.ready ^Reader *in*)
         (doseq [^String line (line-seq (BufferedReader. *in*))
-                item (jq-processor line)]
+                item (jq-processor (jq/string->json-node line))]
           (println (jq/json-node->string item)))))))
 
 (defn -main [& args]
