@@ -33,7 +33,7 @@ The library is intended to be used for stream processing.
 => [#object[com.fasterxml.jackson.databind.node.ArrayNode 0x8b78e9e "[2,3,4]"]]
 ```
 
-NOTE: the input and output is of the `JsonNode` type.
+NOTE: the input is of the `JsonNode` type while the output ßis a `Collection` of `JsonNode`s.
 
 ### Loading JQ modules from the filesystem
 
@@ -54,7 +54,18 @@ cat /path/to/script.jq
 
 Multiple modules can be provided.
 
-## Inlined example
+### Variables for the expressions
+
+The library supports both: compile and runtime variables.
+
+```clojure
+(let [expression "[$cvar, $rvar]"
+      processor-fn (jq/stream-processor expression {:vars {:cvar "compile"}})]
+  (processor-fn (jq/string->json-node "null") {:vars {:rvar "run"}}))
+=> [#object[com.fasterxml.jackson.databind.node.ArrayNode 0x154d64f4 "[\"compile\",\"run\"]"]]
+```
+
+### Inlined example
 
 ```clojure
 ((jq/processor "map(.+1)") "[1,2,3]")
