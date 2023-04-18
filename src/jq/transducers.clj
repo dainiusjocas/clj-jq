@@ -17,14 +17,14 @@
   ([^ObjectMapper mapper]
    (map (partial impl/JsonNode->clj mapper))))
 
-(defn parser
+(defn parse
   "Returns a transducer that given a JSON String parses it into a JsonNode.
   Accepts an optional Jackson ObjectMapper."
   ([] (map impl/string->json-node))
   ([^ObjectMapper mapper]
    (map (partial impl/string->json-node mapper))))
 
-(defn serializer
+(defn serialize
   "Returns a transducer that given a JsonNode serializes it to a String.
   Accepts an optional Jackson ObjectMapper."
   ([] (map impl/json-node->string))
@@ -32,21 +32,21 @@
    (map (partial impl/json-node->string mapper))))
 
 ;; Pretty printer serializer
-(defn pretty-printer
+(defn pretty-print
   "Same as the `serializer` but the output string is indented.
   ObjectMapper is copied to prevent side effects in case mapper is shared."
-  ([] (pretty-printer impl/mapper))
+  ([] (pretty-print impl/mapper))
   ([^ObjectMapper mapper]
    (map (partial impl/json-node->string
                  (.enable (.copy mapper) SerializationFeature/INDENT_OUTPUT)))))
 
-(defn search
+(defn execute
   "Returns a transducer that accepts JsonNode on which
   the expression will be applied.
   Optional opts are supported that are passed for the `jq.api/stream-processor`.
   Specific opts for the transducer:
     :cat - whether to catenate output, default true"
-  ([^String expression] (search expression {}))
+  ([^String expression] (execute expression {}))
   ([^String expression opts]
    (let [xf (map (api/stream-processor expression opts))]
      (if (false? (:cat opts))
@@ -66,7 +66,7 @@
   ([^String expression opts ^ObjectMapper mapper]
    (comp
      (->JsonNode mapper)
-     (search expression (assoc opts :cat true))
+     (execute expression (assoc opts :cat true))
      (JsonNode->clj mapper))))
 
 (comment
@@ -74,7 +74,7 @@
   (into []
         (comp
           (->JsonNode)
-          (search "(. , .)")
+          (execute "(. , .)")
           (JsonNode->clj))
         [1 2 3])
 

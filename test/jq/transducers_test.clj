@@ -11,7 +11,7 @@
       (is (= expected-result
              (sequence (comp
                          (jq/->JsonNode)
-                         (jq/search query)
+                         (jq/execute query)
                          (jq/JsonNode->clj))
                        data))))
 
@@ -19,15 +19,15 @@
       (is (= ["test"]
              (sequence (comp
                          (jq/->JsonNode)
-                         (jq/search ".")
+                         (jq/execute ".")
                          (jq/JsonNode->clj))
                        ["test"]))))
 
     (testing "JSON string parser, it is converted to TextNode as is"
       (is (= [{"foo" "bar"}]
              (sequence (comp
-                         (jq/parser)
-                         (jq/search ".")
+                         (jq/parse)
+                         (jq/execute ".")
                          (jq/JsonNode->clj))
                        [(json/write-value-as-string {"foo" "bar"})]))))
 
@@ -35,15 +35,15 @@
       (is (= ["{\"a\":\"b\"}" "{\"a\":\"b\"}"]
              (sequence (comp
                          (jq/->JsonNode)
-                         (jq/search "(. , .)")
-                         (jq/serializer))
+                         (jq/execute "(. , .)")
+                         (jq/serialize))
                        [{"a" "b"}]))))
 
     (testing "output catenation opt"
       (is (= expected-result
              (sequence (comp
                          (jq/->JsonNode)
-                         (jq/search query {:cat false})
+                         (jq/execute query {:cat false})
                          cat
                          (jq/JsonNode->clj))
                        data))))
@@ -52,8 +52,8 @@
       (is (= [3 4 5]
              (sequence (comp
                          (jq/->JsonNode)
-                         (jq/search query)
-                         (jq/search query)
+                         (jq/execute query)
+                         (jq/execute query)
                          (jq/JsonNode->clj))
                        data))))))
 
@@ -67,7 +67,7 @@
                                   "namespace" nil}}}]
              (sequence (comp
                          (jq/->JsonNode)
-                         (jq/search query)
+                         (jq/execute query)
                          (jq/JsonNode->clj))
                        data))))
     (testing "keyword aware mappers"
@@ -75,24 +75,24 @@
         (is (= [{:a "b"}]
                (sequence (comp
                            (jq/->JsonNode mapper)
-                           (jq/search query)
+                           (jq/execute query)
                            (jq/JsonNode->clj mapper))
                          data)))))
 
     (testing "parser and serializer"
       (is (= ["{\"foo\":\"bar\"}" "{\"foo\":\"bar\"}"]
              (sequence (comp
-                         (jq/parser json/keyword-keys-object-mapper)
-                         (jq/search "(. , .)")
-                         (jq/serializer json/keyword-keys-object-mapper))
+                         (jq/parse json/keyword-keys-object-mapper)
+                         (jq/execute "(. , .)")
+                         (jq/serialize json/keyword-keys-object-mapper))
                        [(json/write-value-as-string {:foo "bar"})]))))
 
     (testing "pretty serializer"
       (is (= ["{\n  \"foo\" : \"bar\"\n}"]
              (sequence (comp
                          (jq/->JsonNode)
-                         (jq/search ".")
-                         (jq/pretty-printer))
+                         (jq/execute ".")
+                         (jq/pretty-print))
                        [{"foo" "bar"}]))))))
 
 (deftest convenience-transducer
