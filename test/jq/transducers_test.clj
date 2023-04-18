@@ -85,7 +85,15 @@
                          (jq/parser json/keyword-keys-object-mapper)
                          (jq/search "(. , .)")
                          (jq/serializer json/keyword-keys-object-mapper))
-                       [(json/write-value-as-string {:foo "bar"})]))))))
+                       [(json/write-value-as-string {:foo "bar"})]))))
+
+    (testing "pretty serializer"
+      (is (= ["{\n  \"foo\" : \"bar\"\n}"]
+             (sequence (comp
+                         (jq/->JsonNode)
+                         (jq/search ".")
+                         (jq/pretty-printer))
+                       [{"foo" "bar"}]))))))
 
 (deftest convenience-transducer
   (let [data [1 2 3]

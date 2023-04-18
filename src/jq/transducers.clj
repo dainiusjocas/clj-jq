@@ -1,7 +1,7 @@
 (ns jq.transducers
   (:require [jq.api :as api]
             [jq.api.api-impl :as impl])
-  (:import (com.fasterxml.jackson.databind ObjectMapper)))
+  (:import (com.fasterxml.jackson.databind ObjectMapper SerializationFeature)))
 
 (defn ->JsonNode
   "Returns a transducer that given a Java object maps it to a JsonNode.
@@ -30,6 +30,14 @@
   ([] (map impl/json-node->string))
   ([^ObjectMapper mapper]
    (map (partial impl/json-node->string mapper))))
+
+;; Pretty printer serializer
+(defn pretty-printer
+  "Same as the `serializer` but the output string is indented."
+  ([] (pretty-printer impl/mapper))
+  ([^ObjectMapper mapper]
+   (map (partial impl/json-node->string
+                 (.enable mapper SerializationFeature/INDENT_OUTPUT)))))
 
 (defn search
   "Returns a transducer that accepts JsonNode on which
