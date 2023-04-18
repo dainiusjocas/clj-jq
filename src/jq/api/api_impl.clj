@@ -22,6 +22,9 @@
     data
     (.valueToTree mapper data)))
 
+(defn JsonNode->clj [^JsonNode json-node]
+  (.treeToValue mapper json-node ^Class Object))
+
 (defn ->absolute-path
   "FileSystemModuleLoader requires absolute paths."
   ^Path [^String file-path]
