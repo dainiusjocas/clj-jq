@@ -96,4 +96,8 @@
 
   ((jq.api/flexible-processor "." {:output :json-node}) "{\"a\":[1,2,3,4,5],\"b\":\"hello\"}")
 
-  ((jq.api/stream-processor "." {}) (impl/->JsonNode {"a" "b"})))
+  (let [expression "[$cvar, $rvar]"
+        processor-fn (stream-processor expression {:vars {:cvar "compile"}})]
+    (processor-fn (string->json-node "null") {:vars {:rvar "run"}}))
+
+  ((jq.api/stream-processor "." {}) (jq.api/string->json-node {"a" "b"})))
