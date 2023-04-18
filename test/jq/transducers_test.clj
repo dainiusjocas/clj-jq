@@ -12,7 +12,24 @@
              (sequence (comp
                          (jq/->JsonNode)
                          (jq/search query)
+                         (jq/JsonNode->clj))
+                       data))))
+
+    (testing "output catenation opt"
+      (is (= expected-result
+             (sequence (comp
+                         (jq/->JsonNode)
+                         (jq/search query {:cat false})
                          cat
+                         (jq/JsonNode->clj))
+                       data))))
+
+    (testing "multiple scripts in a row"
+      (is (= [3 4 5]
+             (sequence (comp
+                         (jq/->JsonNode)
+                         (jq/search query)
+                         (jq/search query)
                          (jq/JsonNode->clj))
                        data))))))
 
@@ -27,14 +44,19 @@
              (sequence (comp
                          (jq/->JsonNode)
                          (jq/search query)
-                         cat
                          (jq/JsonNode->clj))
                        data))))
     (testing "keyword aware mappers"
-      (is (= [{:a "b"}]
-             (sequence (comp
-                         (jq/->JsonNode json/keyword-keys-object-mapper)
-                         (jq/search query)
-                         cat
-                         (jq/JsonNode->clj json/keyword-keys-object-mapper))
-                       data))))))
+      (let [mapper json/keyword-keys-object-mapper]
+        (is (= [{:a "b"}]
+               (sequence (comp
+                           (jq/->JsonNode mapper)
+                           (jq/search query)
+                           (jq/JsonNode->clj mapper))
+                         data)))))))
+
+(deftest convenience-transducer
+  (let [data [1 2 3]
+        query "(. , .)"]
+    (is (= [1 1 2 2 3 3]
+           (sequence (jq/process query) data)))))
