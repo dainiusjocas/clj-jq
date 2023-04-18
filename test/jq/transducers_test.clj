@@ -40,7 +40,11 @@
                        [{"a" "b"}]))))
 
     (testing "output catenation opt"
-      (is (= expected-result
+      (is (= (sequence (comp
+                         (jq/->JsonNode)
+                         (jq/execute expression)
+                         (jq/JsonNode->value))
+                       data)
              (sequence (comp
                          (jq/->JsonNode)
                          (jq/execute expression {:cat false})
