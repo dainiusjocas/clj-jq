@@ -4,6 +4,8 @@ For a list of breaking changes, check [here](#breaking-changes).
 
 ## Unreleased
 
+## v2.0.0
+
 - Upgrade `jackson-jq` to 1.0.0-preview.20230409 #26
 - Allow variables to be passed at the expression compile time #29 (Thanks to @charles-dyfis-net)
 - Nix support #34 (Thanks to @charles-dyfis-net)
@@ -38,6 +40,8 @@ For a list of breaking changes, check [here](#breaking-changes).
 ## Breaking changes
 
 ## Unreleased
+
+## v2.0.0
 
 - `flexible-processor` with `{:output :json-node}` always returns `ArrayNode`
 - Options with String->String might return new line separated outputs
