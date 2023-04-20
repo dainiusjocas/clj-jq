@@ -4,6 +4,8 @@ For a list of breaking changes, check [here](#breaking-changes).
 
 ## Unreleased
 
+- Avoid creating intermediate collections in transducers #48
+
 ## v2.0.0
 
 - Upgrade `jackson-jq` to 1.0.0-preview.20230409 #26
