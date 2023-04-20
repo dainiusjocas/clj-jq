@@ -159,3 +159,39 @@
   "Compiles a JQ query string into a JsonQuery object."
   ^JsonQuery [^String query]
   (JsonQuery/compile query jq-version))
+
+(definterface OutputWithAcc
+  (^net.thisptr.jackson.jq.Output withAcc [acc]))
+
+(deftype XfOutput [rf ^:volatile-mutable acc]
+  Output
+  ; Pass down the transducers chain
+  (emit [_ json-node] (rf acc json-node))
+  OutputWithAcc
+  ; Set value and return object itself
+  (withAcc [this current-acc] (set! acc current-acc) this))
+
+(defn fast-transducer
+  "Returns a transducer that avoids creating intermediate collections for JSON entities.
+  Doesn't support runtime variables.
+  NOTE: if used from multiple threads, the output ordering by input is not guaranteed."
+  ([^String expression] (fast-transducer expression {}))
+  ([^String expression opts]
+   (let [^JsonQuery query (compile-query expression)
+         ^Scope scope (new-scope opts)]
+     (fn [rf]
+       (let [^XfOutput output (XfOutput. rf nil)]
+         (fn transducer
+           ([] (rf))
+           ([acc] (rf acc))
+           ([acc ^JsonNode data]
+            (.apply query scope data (.withAcc output acc))
+            acc)))))))
+
+(comment
+  (time (into []
+              (comp
+                (map ->JsonNode)
+                (fast-transducer "(. , .)")
+                (map JsonNode->clj))
+              [1 2 3])))

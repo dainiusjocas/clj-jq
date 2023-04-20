@@ -48,10 +48,9 @@
     :cat - whether to catenate output, default true"
   ([^String expression] (execute expression {}))
   ([^String expression opts]
-   (let [xf (map (api/stream-processor expression opts))]
-     (if (false? (:cat opts))
-       xf
-       (comp xf cat)))))
+   (if (false? (:cat opts))
+     (map (api/stream-processor expression opts))
+     (impl/fast-transducer expression opts))))
 
 (defn process
   "Returns a convenience transducer that:
