@@ -4,6 +4,8 @@ For a list of breaking changes, check [here](#breaking-changes).
 
 ## Unreleased
 
+## v2.1.0
+
 - Avoid creating intermediate collections in transducers #48
 
 ## v2.0.0
