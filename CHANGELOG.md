@@ -4,6 +4,8 @@ For a list of breaking changes, check [here](#breaking-changes).
 
 ## Unreleased
 
+- Handle multiple JSON entities per line (issue #49) (PR #51)
+
 ## v2.1.0
 
 - Avoid creating intermediate collections in transducers #48

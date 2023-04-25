@@ -104,3 +104,10 @@
         expression "(. , .)"]
     (is (= [1 1 2 2 3 3]
            (sequence (jq/process expression) data)))))
+
+(deftest multiple-values-per-string
+  (let [data ["\"hello\" \"world\""]
+        actual (sequence (comp (jq/rdr->json-nodes)
+                               (jq/JsonNode->value)) (map #(java.io.StringReader. %) data))]
+    (is (= 2 (count actual)))
+    (is (= ["hello" "world"] actual))))
