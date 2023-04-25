@@ -3,8 +3,7 @@
   (:require [clojure.java.io :as io]
             [clojure.string :as str]
             [clojure.tools.cli :as cli]
-            [jq.transducers :as jq])
-  (:import (java.io BufferedReader Reader)))
+            [jq.transducers :as jq]))
 
 (def cli-options
   [["-c" "--[no-]compact" "compact instead of pretty-printed output." :default false]
@@ -34,7 +33,7 @@
              (jq/execute jq-expression)
              (if (:compact opts) (jq/serialize) (jq/pretty-print))]
         xf (apply comp (remove nil? xfs))
-        values (or (seq files) (when (.ready ^Reader *in*) [(BufferedReader. *in*)]))]
+        values (or (seq files) [*in*])]
     (transduce xf printer nil values)))
 
 (defn -main [& args]

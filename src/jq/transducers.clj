@@ -2,7 +2,8 @@
   (:require [jq.api :as api]
             [jq.api.api-impl :as impl])
   (:import (com.fasterxml.jackson.databind ObjectMapper SerializationFeature)
-           (java.io Reader)))
+           (java.io Reader)
+           (java.util Iterator)))
 
 (defn ->JsonNode
   "Returns a transducer that given a Java object maps it to a JsonNode.
@@ -35,7 +36,7 @@
        ([] (rf))
        ([acc] (rf acc))
        ([acc ^Reader rdr]
-        (loop [iter (impl/rdr->json-node-iter mapper rdr)]
+        (loop [^Iterator iter (impl/rdr->json-node-iter mapper rdr)]
           (if (.hasNext iter)
             (do
               (rf acc (.next iter))
