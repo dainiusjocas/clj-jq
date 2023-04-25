@@ -1,7 +1,8 @@
 (ns jq.transducers
   (:require [jq.api :as api]
             [jq.api.api-impl :as impl])
-  (:import (com.fasterxml.jackson.databind ObjectMapper SerializationFeature)))
+  (:import (com.fasterxml.jackson.databind ObjectMapper SerializationFeature)
+           (java.io Reader)))
 
 (defn ->JsonNode
   "Returns a transducer that given a Java object maps it to a JsonNode.
@@ -23,6 +24,26 @@
   ([] (map impl/string->json-node))
   ([^ObjectMapper mapper]
    (map (partial impl/string->json-node mapper))))
+
+(defn rdr->json-nodes
+  "Returns a transducer that given a java.io.Reader parses it into a stream of JsonNode.
+  Accepts an optional Jackson ObjectMapper."
+  ([] (rdr->json-nodes impl/mapper))
+  ([^ObjectMapper mapper]
+   (fn [rf]
+     (fn transducer
+       ([] (rf))
+       ([acc] (rf acc))
+       ([acc ^Reader rdr]
+        (loop [iter (impl/rdr->json-node-iter mapper rdr)]
+          (if (.hasNext iter)
+            (do
+              (rf acc (.next iter))
+              (recur iter))
+            acc)))))))
+
+(comment
+  (sequence (rdr->json-nodes) [(java.io.StringReader. "\"hello\" \"world\"")]))
 
 (defn serialize
   "Returns a transducer that given a JsonNode serializes it to a String.

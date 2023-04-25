@@ -3,12 +3,8 @@
   (:require [clojure.java.io :as io]
             [clojure.string :as str]
             [clojure.tools.cli :as cli]
-            [jq.api.api-impl :as impl]
             [jq.transducers :as jq])
-  (:import (clojure.lang IReduceInit)
-           (com.fasterxml.jackson.databind JsonNode)
-           (java.io Reader)
-           (java.util Iterator)))
+  (:import (java.io BufferedReader Reader)))
 
 (def cli-options
   [["-c" "--[no-]compact" "compact instead of pretty-printed output." :default false]
@@ -28,33 +24,17 @@
   (println "Supported options:")
   (println summary))
 
-(defn json-nodes
-  "Reads lines from the stdin and pushes them further."
-  [^Reader rdr]
-  (reify IReduceInit
-    (reduce [_ f init]
-      (try
-        (loop [state init
-               ^Iterator iter (.readValues (.readerFor impl/mapper ^Class JsonNode) rdr)]
-          (if (reduced? state)
-            state
-            (if (.hasNext iter)
-              (recur (f state (.next iter)) iter)
-              state)))
-        (finally (.close rdr))))))
-
 (defn printer
   ([_])
   ([_ item] (println item)))
 
 (defn execute [jq-expression files opts]
   (let [xfs [(when (seq files) (map (fn [file] (io/reader (io/file file)))))
-             (map json-nodes)
-             cat
+             (jq/rdr->json-nodes)
              (jq/execute jq-expression)
              (if (:compact opts) (jq/serialize) (jq/pretty-print))]
         xf (apply comp (remove nil? xfs))
-        values (or (seq files) (when (.ready ^Reader *in*) [*in*]))]
+        values (or (seq files) (when (.ready ^Reader *in*) [(BufferedReader. *in*)]))]
     (transduce xf printer nil values)))
 
 (defn -main [& args]

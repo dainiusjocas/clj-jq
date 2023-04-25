@@ -9,7 +9,7 @@
            (net.thisptr.jackson.jq.module.loaders ChainedModuleLoader BuiltinModuleLoader FileSystemModuleLoader)
            (net.thisptr.jackson.jq.module ModuleLoader)
            (java.nio.file Path)
-           (java.io File)))
+           (java.io File Reader)))
 
 (set! *warn-on-reflection* true)
 
@@ -77,6 +77,20 @@
   (^JsonNode [^String data] (string->json-node mapper data))
   (^JsonNode [^ObjectMapper mapper ^String data]
    (.readTree mapper data)))
+
+(defn rdr->json-node-iter
+  "Takes in a java.io.Reader and returns an iterator of JsonNode values."
+  ([^Reader rdr] (rdr->json-node-iter mapper rdr))
+  ([^ObjectMapper mapper ^Reader rdr]
+   (.readValues (.readerFor mapper ^Class JsonNode) rdr)))
+
+(comment
+  ; Two JSON values encoded in one string produces two values
+  (= 2 (-> "\"hello\" \"world\""
+           (java.io.StringReader.)
+           (rdr->json-node-iter)
+           (iterator-seq)
+           (count))))
 
 (defn json-node->string
   (^String [^JsonNode data] (json-node->string mapper data))
