@@ -65,16 +65,19 @@
     (.loadFunctions (BuiltinFunctionLoader/getInstance) jq-version scope)
     scope))
 
+(defn put-vars-in-scope [^Scope scope vars]
+  (if (instance? ObjectNode vars)
+    (let [^Iterator iter (.fields ^ObjectNode vars)]
+      (while (.hasNext iter)
+        (let [^Map$Entry entry (.next iter)]
+          (.setValue scope (.getKey entry) (.getValue entry)))))
+    (doseq [[key value] vars]
+      (.setValue scope (name key) (->JsonNode value)))))
+
 (defn scope-with-vars ^Scope [^Scope old-scope vars]
   (if vars
     (let [scope (Scope/newChildScope old-scope)]
-      (if (instance? ObjectNode vars)
-        (let [^Iterator iter (.fields ^ObjectNode vars)]
-          (while (.hasNext iter)
-            (let [^Map$Entry entry (.next iter)]
-              (.setValue scope (.getKey entry) (.getValue entry)))))
-        (doseq [[key value] vars]
-          (.setValue scope (name key) (->JsonNode value))))
+      (put-vars-in-scope scope vars)
       scope)
     old-scope))
 
@@ -169,9 +172,7 @@
          variables (get opts :vars)]
      (when (seq module-paths)
        (setup-modules! scope module-paths))
-     (when variables
-       (doseq [[key value] variables]
-        (.setValue scope (name key) (->JsonNode value))))
+     (put-vars-in-scope scope variables)
      scope)))
 
 (defn compile-query
