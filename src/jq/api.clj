@@ -100,4 +100,4 @@
         processor-fn (stream-processor expression {:vars {:cvar "compile"}})]
     (processor-fn (string->json-node "null") {:vars {:rvar "run"}}))
 
-  ((jq.api/stream-processor "." {}) (jq.api/string->json-node {"a" "b"})))
+  ((jq.api/stream-processor "." {}) (impl/->JsonNode {"a" "b"})))
