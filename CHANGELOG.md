@@ -4,6 +4,8 @@ For a list of breaking changes, check [here](#breaking-changes).
 
 ## Unreleased
 
+## v2.3.0
+
 - Handle vars that are of the `JsonNode` type #53 (issue $52)
 
 ## v2.2.0
