@@ -123,4 +123,18 @@
           resp (-> (utils/string->json-node "null")
                    (processor-fn {:vars {:rvar "run"}}))]
       (is (= 1 (count resp)))
-      (is (= "[\"compile\",\"run\"]" (-> resp first utils/json-node->string))))))
+      (is (= "[\"compile\",\"run\"]" (-> resp first utils/json-node->string)))))
+  (testing "compile time vars as JsonNode"
+    (let [expression ".n = $n"
+          processor-fn (jq/stream-processor expression {:vars (utils/->JsonNode {"n" 3})})
+          resp (-> (utils/->JsonNode {"n" 100})
+                   (processor-fn))]
+      (is (= 1 (count resp)))
+      (is (= "{\"n\":3}" (-> resp first utils/json-node->string)))))
+  (testing "runtime vars as JsonNode"
+    (let [expression ".n = $n"
+          processor-fn (jq/stream-processor expression)
+          resp (-> (utils/->JsonNode {"n" 100})
+                   (processor-fn {:vars (utils/->JsonNode {"n" 3})}))]
+      (is (= 1 (count resp)))
+      (is (= "{\"n\":3}" (-> resp first utils/json-node->string))))))

@@ -2,10 +2,10 @@
       :no-doc true}
   jq.api.api-impl
   (:require [clojure.string :as str])
-  (:import (java.util ArrayList)
+  (:import (java.util ArrayList Iterator Map$Entry)
            (net.thisptr.jackson.jq JsonQuery Versions Scope BuiltinFunctionLoader Output)
            (com.fasterxml.jackson.databind ObjectMapper JsonNode)
-           (com.fasterxml.jackson.databind.node ArrayNode JsonNodeFactory)
+           (com.fasterxml.jackson.databind.node ArrayNode JsonNodeFactory ObjectNode)
            (net.thisptr.jackson.jq.module.loaders ChainedModuleLoader BuiltinModuleLoader FileSystemModuleLoader)
            (net.thisptr.jackson.jq.module ModuleLoader)
            (java.nio.file Path)
@@ -65,11 +65,19 @@
     (.loadFunctions (BuiltinFunctionLoader/getInstance) jq-version scope)
     scope))
 
+(defn put-vars-in-scope [^Scope scope vars]
+  (if (instance? ObjectNode vars)
+    (let [^Iterator iter (.fields ^ObjectNode vars)]
+      (while (.hasNext iter)
+        (let [^Map$Entry entry (.next iter)]
+          (.setValue scope (.getKey entry) (.getValue entry)))))
+    (doseq [[key value] vars]
+      (.setValue scope (name key) (->JsonNode value)))))
+
 (defn scope-with-vars ^Scope [^Scope old-scope vars]
   (if vars
     (let [scope (Scope/newChildScope old-scope)]
-      (doseq [[key value] vars]
-        (.setValue scope (name key) (->JsonNode value)))
+      (put-vars-in-scope scope vars)
       scope)
     old-scope))
 
@@ -164,9 +172,7 @@
          variables (get opts :vars)]
      (when (seq module-paths)
        (setup-modules! scope module-paths))
-     (when variables
-       (doseq [[key value] variables]
-        (.setValue scope (name key) (->JsonNode value))))
+     (put-vars-in-scope scope variables)
      scope)))
 
 (defn compile-query
