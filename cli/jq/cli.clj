@@ -48,5 +48,8 @@
       (if (:help options)
         (System/exit 0)
         (System/exit 1)))
-    (execute jq-filter files options))
+    (try
+      (execute jq-filter files options)
+      (catch Exception e
+        (.println System/err (.getMessage e)))))
   (System/exit 0))
