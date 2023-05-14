@@ -24,7 +24,8 @@
    :jvm-opts   ["-Dclojure.main.report=stderr"]}
   :cli
   {:extra-paths ["cli" "classes" "resources"]
-   :extra-deps  {org.clojure/tools.cli {:mvn/version "1.0.219"}}}
+   :extra-deps  {org.clojure/tools.cli        {:mvn/version "1.0.219"}
+                 net.thisptr/jackson-jq-extra {:mvn/version "1.0.0-preview.20230409"}}}
   :build
   {:deps        {io.github.clojure/tools.build {:mvn/version "0.9.4"}}
    :extra-paths ["build"]
