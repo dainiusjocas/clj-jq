@@ -4,6 +4,9 @@ For a list of breaking changes, check [here](#breaking-changes).
 
 ## Unreleased
 
+- Update GraalVM to 22.3.2
+- Update jackson-databind to 2.15.0
+
 ## v2.3.0
 
 - Handle vars that are of the `JsonNode` type #53 (issue $52)

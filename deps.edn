@@ -1,11 +1,12 @@
 {:paths
  ["src"]
  :deps
- {net.thisptr/jackson-jq {:mvn/version "1.0.0-preview.20230409"}}
+ {net.thisptr/jackson-jq {:mvn/version "1.0.0-preview.20230409"}
+  com.fasterxml.jackson.core/jackson-databind {:mvn/version "2.15.0"}}
  :aliases
  {:dev
   {:extra-paths ["dev" "classes" "test" "test/resources"]
-   :extra-deps  {org.clojure/tools.deps.alpha {:mvn/version "0.15.1244"
+   :extra-deps  {org.clojure/tools.deps.alpha {:mvn/version "0.15.1254"
                                                :exclusions  [org.slf4j/slf4j-log4j12
                                                              org.slf4j/slf4j-api
                                                              org.slf4j/slf4j-nop]}
@@ -19,18 +20,18 @@
    :main-opts   ["-m" "cognitect.test-runner"]}
   :clj-kondo
   {:main-opts  ["-m" "clj-kondo.main" "--lint" "src" "test"]
-   :extra-deps {clj-kondo/clj-kondo {:mvn/version "2022.10.14"}}
+   :extra-deps {clj-kondo/clj-kondo {:mvn/version "2023.04.14"}}
    :jvm-opts   ["-Dclojure.main.report=stderr"]}
   :cli
   {:extra-paths ["cli" "classes" "resources"]
-   :extra-deps  {org.clojure/tools.cli {:mvn/version "1.0.214"}}}
+   :extra-deps  {org.clojure/tools.cli {:mvn/version "1.0.219"}}}
   :build
-  {:deps        {io.github.clojure/tools.build {:git/tag "v0.8.3" :git/sha "0d20256"}}
+  {:deps        {io.github.clojure/tools.build {:mvn/version "0.9.4"}}
    :extra-paths ["build"]
    :ns-default  build
    :jvm-opts    ["-Dclojure.main.report=stderr" "-Dclojure.compiler.direct-linking=true"]}
   :deploy
-  {:replace-deps {slipset/deps-deploy {:mvn/version "0.2.0"}}
+  {:replace-deps {slipset/deps-deploy {:mvn/version "0.2.1"}}
    :exec-fn      deps-deploy.deps-deploy/deploy
    :exec-args    {:installer :remote
                   :pom-file  "target/classes/META-INF/maven/lt.jocas/clj-jq/pom.xml"
