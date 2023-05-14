@@ -1,7 +1,7 @@
 {:paths
  ["src"]
  :deps
- {net.thisptr/jackson-jq {:mvn/version "1.0.0-preview.20230409"}
+ {net.thisptr/jackson-jq                      {:mvn/version "1.0.0-preview.20230409"}
   com.fasterxml.jackson.core/jackson-databind {:mvn/version "2.15.0"}}
  :aliases
  {:dev
