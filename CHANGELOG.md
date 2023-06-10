@@ -5,7 +5,7 @@ For a list of breaking changes, check [here](#breaking-changes).
 ## Unreleased
 
 - Update GraalVM to 22.3.2
-- Update jackson-databind to 2.15.0
+- Update jackson-databind to 2.15.2
 - fix: only print the exception message
 - add `net.thisptr/jackson-jq-extra` package with useful functions to the CLI tool
 

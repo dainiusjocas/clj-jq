@@ -2,7 +2,7 @@
  ["src"]
  :deps
  {net.thisptr/jackson-jq                      {:mvn/version "1.0.0-preview.20230409"}
-  com.fasterxml.jackson.core/jackson-databind {:mvn/version "2.15.0"}}
+  com.fasterxml.jackson.core/jackson-databind {:mvn/version "2.15.2"}}
  :aliases
  {:dev
   {:extra-paths ["dev" "classes" "test" "test/resources"]
@@ -20,7 +20,7 @@
    :main-opts   ["-m" "cognitect.test-runner"]}
   :clj-kondo
   {:main-opts  ["-m" "clj-kondo.main" "--lint" "src" "test"]
-   :extra-deps {clj-kondo/clj-kondo {:mvn/version "2023.04.14"}}
+   :extra-deps {clj-kondo/clj-kondo {:mvn/version "2023.05.26"}}
    :jvm-opts   ["-Dclojure.main.report=stderr"]}
   :cli
   {:extra-paths ["cli" "classes" "resources"]
