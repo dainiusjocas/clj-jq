@@ -1,4 +1,5 @@
 (ns jq.core-test
+  {:clj-kondo/config '{:linters {:deprecated-namespace {:level :off}}}}
   (:require [clojure.test :refer [deftest is testing]]
             [jq.core :as jq])
   (:import (com.fasterxml.jackson.databind ObjectMapper)))

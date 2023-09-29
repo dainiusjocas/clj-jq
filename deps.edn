@@ -11,23 +11,23 @@
                                                              org.slf4j/slf4j-api
                                                              org.slf4j/slf4j-nop]}
                  criterium/criterium          {:mvn/version "0.4.6"}
-                 metosin/jsonista             {:mvn/version "0.3.7"}}}
+                 metosin/jsonista             {:mvn/version "0.3.8"}}}
   :test
   {:extra-paths ["test" "test/resources"]
    :extra-deps  {com.cognitect/test-runner {:git/url "https://github.com/cognitect-labs/test-runner.git"
                                             :sha     "7284cda41fb9edc0f3bc6b6185cfb7138fc8a023"}
-                 metosin/jsonista          {:mvn/version "0.3.7"}}
+                 metosin/jsonista          {:mvn/version "0.3.8"}}
    :main-opts   ["-m" "cognitect.test-runner"]}
   :clj-kondo
   {:main-opts  ["-m" "clj-kondo.main" "--lint" "src" "test"]
-   :extra-deps {clj-kondo/clj-kondo {:mvn/version "2023.05.26"}}
+   :extra-deps {clj-kondo/clj-kondo {:mvn/version "2023.09.07"}}
    :jvm-opts   ["-Dclojure.main.report=stderr"]}
   :cli
   {:extra-paths ["cli" "classes" "resources"]
    :extra-deps  {org.clojure/tools.cli        {:mvn/version "1.0.219"}
                  net.thisptr/jackson-jq-extra {:mvn/version "1.0.0-preview.20230409"}}}
   :build
-  {:deps        {io.github.clojure/tools.build {:mvn/version "0.9.4"}}
+  {:deps        {io.github.clojure/tools.build {:mvn/version "0.9.5"}}
    :extra-paths ["build"]
    :ns-default  build
    :jvm-opts    ["-Dclojure.main.report=stderr" "-Dclojure.compiler.direct-linking=true"]}

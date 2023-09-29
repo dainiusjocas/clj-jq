@@ -14,6 +14,7 @@ args=( "-jar" "target/$lib-$CLJ_JQ_VERSION-standalone.jar"
        "--initialize-at-build-time"
        "-H:Log=registerResource:"
        "--verbose"
+       "-march=compatibility"
        "--no-fallback"
        "-J-Xmx8g" )
 
